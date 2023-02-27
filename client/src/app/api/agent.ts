@@ -1,9 +1,16 @@
-import axios, { AxiosError, AxiosResponse } from "axios";
+import axios, { AxiosResponse } from "axios";
+import { store } from "../store/configureStore";
 
 axios.defaults.baseURL = 'http://localhost:5104/';
 axios.defaults.withCredentials = true;
 
 const responseBody = (response: AxiosResponse) => response.data;
+
+axios.interceptors.request.use(config => {
+    const token = store.getState().account.user?.token;
+    if (token) config.headers.Authorization = `Bearer ${token}`;
+    return config;
+})
 
 const requests = {
     get: (url: string) => axios.get(url).then(responseBody),

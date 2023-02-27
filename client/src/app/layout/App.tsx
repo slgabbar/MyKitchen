@@ -1,14 +1,14 @@
-import { createTheme, ThemeProvider } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import { Container } from '@mui/system';
 import { useCallback, useEffect, useState } from 'react';
 import { Route } from 'react-router';
 import { Routes } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
+import { useAppDispatch } from '../store/configureStore';
 import { fetchCurrentUserAsnyc } from '../../features/account/accountSlice';
+import Login from '../../features/account/Login';
 import HomePage from '../../features/home/HomePage';
-import agent from '../api/agent';
-import { useAppDispatch, useAppSelector } from '../store/configureStore';
+import PrivateRoute from './PrivateRoute';
 
 function App() {
 
@@ -30,25 +30,22 @@ function App() {
 
     if (loading) return <span>Loading...</span>
 
-    const theme = createTheme({
-        palette: {
-          mode: 'light',
-          background: {
-            default: '#eaeaea'
-          }
-        },
-      })
-    
     return (
-        <ThemeProvider theme={theme}>
+        <>
             <ToastContainer position='bottom-right' hideProgressBar />
             <CssBaseline />
             <Container>
                 <Routes>
-                    <Route path='/' element={<HomePage />}/>
+                    <Route path='/' element={
+                        <PrivateRoute>
+                            <HomePage />
+                        </PrivateRoute>
+                    }>
+                    </Route>
+                    <Route path='/login' element={<Login />}/>
                 </Routes>
             </Container>
-        </ThemeProvider>
+        </>
     );
 }
 
