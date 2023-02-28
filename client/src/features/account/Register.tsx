@@ -5,25 +5,23 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Paper } from '@mui/material';
 import { useForm } from 'react-hook-form';
-import { FieldValues } from 'react-hook-form/dist/types';
 import { LoadingButton } from '@mui/lab';
-import { useAppDispatch } from '../../app/store/configureStore';
-import { signInUserAsync } from './accountSlice';
+import agent from "../../app/api/agent";
+import { isValidEmail } from '../../app/util/validationHelpers';
+import { useState } from 'react';
 
-export default function Login() {
-  const navigate = useNavigate();
-  const dispatch = useAppDispatch();
-    const {register, handleSubmit, formState:{isSubmitting, errors}} = useForm({
-        mode: 'onSubmit'
-    });
+export default function Register() {
+  const [validationErrors, setValidationErrors] = useState([]);
+  const {register, handleSubmit, watch, formState:{isSubmitting, errors}} = useForm({
+    mode: 'onSubmit'
+  });
 
-    async function submitForm(data: FieldValues) {
-        await dispatch(signInUserAsync(data));
-        navigate('/')
-    }
+  console.log(validationErrors);
+
+  let confirmPassword = watch("password", "");
 
   return (
       <Container component={Paper} maxWidth="sm" sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', p: 4}}>
@@ -31,9 +29,11 @@ export default function Login() {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign in
+            Sign Up
           </Typography>
-          <Box component="form" onSubmit={handleSubmit(submitForm)} noValidate sx={{ mt: 1 }}>
+          <Box component="form" onSubmit={handleSubmit(data => agent.Account.register(data)
+              .catch(error => setValidationErrors(error)))}
+            noValidate sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
@@ -46,10 +46,23 @@ export default function Login() {
               error={!!errors.username}
               helperText={errors?.username?.message as string}
             />
+             <TextField
+              margin="normal"
+              required
+              fullWidth
+              label="Email"
+              autoFocus
+              {...register('email', {
+                required: 'Email is required',
+                validate: value => isValidEmail(value) || "Not a valid email"
+              })}
+              error={!!errors.email}
+              helperText={errors?.email?.message as string}
+            />
             <TextField
               margin="normal"
-              fullWidth
               required
+              fullWidth
               label="Password"
               type="password"
               {...register('password', {
@@ -59,6 +72,20 @@ export default function Login() {
               helperText={errors?.password
                 ?.message as string}
            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              label="Confirm Password"
+              type="password"
+              {...register('confirmPassword', {
+                validate: value =>
+                  value === confirmPassword || "Password does not match"
+              })}
+              error={!!errors.confirmPassword}
+              helperText={errors?.confirmPassword
+                ?.message as string}
+           />
             <LoadingButton
               loading={isSubmitting}
               type="submit"
@@ -66,12 +93,12 @@ export default function Login() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign In
+              Sign Up
             </LoadingButton>
             <Grid container>
               <Grid item>
-                <Link to="/register">
-                  {"Don't have an account? Sign Up"}
+                <Link to="/login">
+                  {"Already have an account? Sign In"}
                 </Link>
               </Grid>
             </Grid>
@@ -79,3 +106,4 @@ export default function Login() {
       </Container>
   );
 }
+

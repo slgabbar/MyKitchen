@@ -38,7 +38,7 @@ public class AccountController : BaseApiController
     }
 
     [HttpPost("register")]
-    public async Task<ActionResult> Register(RegisterDto registerDto)
+    public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
     {
         var user = new User
         {
@@ -58,7 +58,11 @@ public class AccountController : BaseApiController
 
         await _userManager.AddToRoleAsync(user, "user");
 
-        return StatusCode(201);
+        return new UserDto
+        {
+            Email = user.Email,
+            Token = await _tokenService.GenerateToken(user)
+        };
     }
 
 

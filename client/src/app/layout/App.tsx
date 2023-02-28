@@ -9,6 +9,7 @@ import { fetchCurrentUserAsnyc } from '../../features/account/accountSlice';
 import Login from '../../features/account/Login';
 import HomePage from '../../features/home/HomePage';
 import PrivateRoute from './PrivateRoute';
+import Register from '../../features/account/Register';
 
 function App() {
 
@@ -43,6 +44,7 @@ function App() {
                     }>
                     </Route>
                     <Route path='/login' element={<Login />}/>
+                    <Route path='/register' element={<Register />}/>
                 </Routes>
             </Container>
         </>

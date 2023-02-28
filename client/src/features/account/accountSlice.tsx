@@ -45,6 +45,20 @@ export const fetchCurrentUserAsnyc = createAsyncThunk<User>(
     }
 )
 
+export const registerUserAsync = createAsyncThunk<User, FieldValues>(
+    'account/registerUser',
+    async (data, thunkApi) => {
+        try {
+            const user = await agent.Account.register(data);
+            localStorage.setItem('user', JSON.stringify(user))
+            return user;
+        }
+        catch (error: any) {
+            return thunkApi.rejectWithValue({error: error.data});
+        }
+    }
+)
+
 export const accountSlice = createSlice({
     name: 'account',
     initialState,
@@ -63,11 +77,15 @@ export const accountSlice = createSlice({
             localStorage.removeItem('user');
         })
 
-        builder.addMatcher(isAnyOf(signInUserAsync.fulfilled, fetchCurrentUserAsnyc.fulfilled), (state, action) => {
+        builder.addMatcher(isAnyOf(signInUserAsync.fulfilled,
+            fetchCurrentUserAsnyc.fulfilled,
+            registerUserAsync.fulfilled),
+            (state, action) => {
             state.user = action.payload;
         });
 
-        builder.addMatcher(isAnyOf(signInUserAsync.rejected), (state, action) => {
+        builder.addMatcher(isAnyOf(signInUserAsync.rejected,
+            registerUserAsync.rejected), (state, action) => {
             console.log(action.payload);
         })
     }),
