@@ -1,7 +1,9 @@
 import { createAsyncThunk, createSlice, isAnyOf } from "@reduxjs/toolkit";
 import { FieldValues } from "react-hook-form";
+import { toast } from "react-toastify";
 import agent from "../../app/api/agent";
 import { User } from "../../app/models/user";
+import { router } from "../../app/router/Routes";
 
 interface AccountState {
     user: User | null;
@@ -45,6 +47,20 @@ export const fetchCurrentUserAsnyc = createAsyncThunk<User>(
     }
 )
 
+export const registerUserAsync = createAsyncThunk<User, FieldValues>(
+    'account/registerUser',
+    async (data, thunkApi) => {
+        try {
+            const user = await agent.Account.register(data);
+            localStorage.setItem('user', JSON.stringify(user))
+            return user;
+        }
+        catch (error: any) {
+            return thunkApi.rejectWithValue({error: error.data});
+        }
+    }
+)
+
 export const accountSlice = createSlice({
     name: 'account',
     initialState,
@@ -52,6 +68,7 @@ export const accountSlice = createSlice({
         signOut: (state) => {
             state.user = null;
             localStorage.removeItem('user');
+            router.navigate('/');
         },
         setUser: (state, action) => {
             state.user = action.payload;
@@ -61,13 +78,19 @@ export const accountSlice = createSlice({
         builder.addCase(fetchCurrentUserAsnyc.rejected, (state) => {
             state.user = null;
             localStorage.removeItem('user');
+            toast.error('Session expired - please login again');
+            router.navigate('/');
         })
 
-        builder.addMatcher(isAnyOf(signInUserAsync.fulfilled, fetchCurrentUserAsnyc.fulfilled), (state, action) => {
+        builder.addMatcher(isAnyOf(signInUserAsync.fulfilled,
+            fetchCurrentUserAsnyc.fulfilled,
+            registerUserAsync.fulfilled),
+            (state, action) => {
             state.user = action.payload;
         });
 
-        builder.addMatcher(isAnyOf(signInUserAsync.rejected), (state, action) => {
+        builder.addMatcher(isAnyOf(signInUserAsync.rejected,
+            registerUserAsync.rejected), (state, action) => {
             console.log(action.payload);
         })
     }),

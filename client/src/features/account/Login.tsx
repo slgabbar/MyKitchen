@@ -16,8 +16,8 @@ import { signInUserAsync } from './accountSlice';
 export default function Login() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-    const {register, handleSubmit, formState:{isSubmitting, errors, isValid}} = useForm({
-        mode: 'onTouched'
+    const {register, handleSubmit, formState:{isSubmitting, errors}} = useForm({
+        mode: 'onSubmit'
     });
 
     async function submitForm(data: FieldValues) {
@@ -49,6 +49,7 @@ export default function Login() {
             <TextField
               margin="normal"
               fullWidth
+              required
               label="Password"
               type="password"
               {...register('password', {
@@ -60,7 +61,6 @@ export default function Login() {
            />
             <LoadingButton
               loading={isSubmitting}
-              disabled={!isValid}
               type="submit"
               fullWidth
               variant="contained"
