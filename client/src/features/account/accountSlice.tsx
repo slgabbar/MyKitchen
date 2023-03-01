@@ -1,7 +1,9 @@
 import { createAsyncThunk, createSlice, isAnyOf } from "@reduxjs/toolkit";
 import { FieldValues } from "react-hook-form";
+import { toast } from "react-toastify";
 import agent from "../../app/api/agent";
 import { User } from "../../app/models/user";
+import { router } from "../../app/router/Routes";
 
 interface AccountState {
     user: User | null;
@@ -66,6 +68,7 @@ export const accountSlice = createSlice({
         signOut: (state) => {
             state.user = null;
             localStorage.removeItem('user');
+            router.navigate('/');
         },
         setUser: (state, action) => {
             state.user = action.payload;
@@ -75,6 +78,8 @@ export const accountSlice = createSlice({
         builder.addCase(fetchCurrentUserAsnyc.rejected, (state) => {
             state.user = null;
             localStorage.removeItem('user');
+            toast.error('Session expired - please login again');
+            router.navigate('/');
         })
 
         builder.addMatcher(isAnyOf(signInUserAsync.fulfilled,

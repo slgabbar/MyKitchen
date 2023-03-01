@@ -13,12 +13,10 @@ public class AccountController : BaseApiController
 {
     private readonly UserManager<User> _userManager;
     private readonly TokenService _tokenService;
-    private readonly Guid _userKey;
 
     public AccountController(UserManager<User> userManager, TokenService tokenService)
     {
         _userManager = userManager;
-        _userKey = new Guid("1b6ae95c-b028-46ae-9555-71a8458afa2a");
         _tokenService = tokenService;
     }
 
@@ -54,6 +52,8 @@ public class AccountController : BaseApiController
             {
                 ModelState.AddModelError(error.Code, error.Description);
             }
+
+            return ValidationProblem();
         }
 
         await _userManager.AddToRoleAsync(user, "user");

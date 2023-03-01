@@ -11,17 +11,26 @@ import { useForm } from 'react-hook-form';
 import { LoadingButton } from '@mui/lab';
 import agent from "../../app/api/agent";
 import { isValidEmail } from '../../app/util/validationHelpers';
-import { useState } from 'react';
 
 export default function Register() {
-  const [validationErrors, setValidationErrors] = useState([]);
-  const {register, handleSubmit, watch, formState:{isSubmitting, errors}} = useForm({
+  const {register, handleSubmit, setError, watch, formState:{isSubmitting, errors}} = useForm({
     mode: 'onSubmit'
   });
 
-  console.log(validationErrors);
-
   let confirmPassword = watch("password", "");
+
+  function handleApiErrors(errors: any) {
+    if (errors) {
+      errors.forEach((error: string) => {
+        // should make password errors on the client for pw
+        if (error.includes('Password')) {
+          setError('password', {message: error})
+        } else if (error.includes('Email')) {
+          setError('email', {message: error})
+        }
+      });
+    }
+  }
 
   return (
       <Container component={Paper} maxWidth="sm" sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', p: 4}}>
@@ -32,7 +41,7 @@ export default function Register() {
             Sign Up
           </Typography>
           <Box component="form" onSubmit={handleSubmit(data => agent.Account.register(data)
-              .catch(error => setValidationErrors(error)))}
+              .catch(error => handleApiErrors(error)))}
             noValidate sx={{ mt: 1 }}>
             <TextField
               margin="normal"
