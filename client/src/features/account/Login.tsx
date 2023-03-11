@@ -8,21 +8,29 @@ import Container from '@mui/material/Container';
 import { Link, useNavigate } from 'react-router-dom';
 import { Paper } from '@mui/material';
 import { useForm } from 'react-hook-form';
-import { FieldValues } from 'react-hook-form/dist/types';
 import { LoadingButton } from '@mui/lab';
 import { useAppDispatch } from '../../app/store/configureStore';
-import { signInUserAsync } from './accountSlice';
+import { setUser } from './accountSlice';
+import agent from '../../app/api/agent';
+import { User } from '../../app/models/user';
 
 export default function Login() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-    const {register, handleSubmit, formState:{isSubmitting, errors}} = useForm({
+    const {register, handleSubmit, setError, formState:{isSubmitting, errors}} = useForm({
         mode: 'onSubmit'
     });
 
-    async function submitForm(data: FieldValues) {
-        await dispatch(signInUserAsync(data));
-        navigate('/')
+    function handleApiErrors(errors: any) {
+      if (errors) {
+        errors.forEach((error: string) => {
+          if (error.includes('Username')) {
+            setError('username', {message: error})
+          } else if (error.includes('password')) {
+            setError('password', {message: error})
+          }
+        });
+      }
     }
 
   return (
@@ -33,7 +41,14 @@ export default function Login() {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <Box component="form" onSubmit={handleSubmit(submitForm)} noValidate sx={{ mt: 1 }}>
+          <Box component="form" onSubmit={handleSubmit(data => agent.Account.login(data)
+            .then((user: User) => {
+              localStorage.setItem('user', user.token);
+              dispatch(setUser(user.token));
+              navigate('/');
+            })
+            .catch(error => handleApiErrors(error)))}
+            noValidate sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
