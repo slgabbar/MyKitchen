@@ -25,8 +25,19 @@ public class AccountController : BaseApiController
     {
         var user = await _userManager.FindByNameAsync(loginDto.UserName);
 
-        if (user == null || !await _userManager.CheckPasswordAsync(user, loginDto.Password))
-            return Unauthorized();
+        if (user == null)
+        {
+            ModelState.AddModelError("username", "Username not found");
+            return ValidationProblem();
+        }
+
+        var result = await _userManager.CheckPasswordAsync(user, loginDto.Password);
+
+        if (!result)
+        {
+            ModelState.AddModelError("password", "Invalid password");
+            return ValidationProblem();
+        }
 
         return new UserDto
         {
