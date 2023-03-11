@@ -5,14 +5,19 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Paper } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { LoadingButton } from '@mui/lab';
 import agent from "../../app/api/agent";
-import { isValidEmail } from '../../app/util/validationHelpers';
+import { getPasswordStrengthErrors, isValidEmail } from '../../app/util/validationHelpers';
+import { User } from '../../app/models/user';
+import { useAppDispatch } from '../../app/store/configureStore';
+import { setUser } from '../../features/account/accountSlice'
 
 export default function Register() {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const {register, handleSubmit, setError, watch, formState:{isSubmitting, errors}} = useForm({
     mode: 'onSubmit'
   });
@@ -22,7 +27,6 @@ export default function Register() {
   function handleApiErrors(errors: any) {
     if (errors) {
       errors.forEach((error: string) => {
-        // should make password errors on the client for pw
         if (error.includes('Password')) {
           setError('password', {message: error})
         } else if (error.includes('Email')) {
@@ -41,6 +45,11 @@ export default function Register() {
             Sign Up
           </Typography>
           <Box component="form" onSubmit={handleSubmit(data => agent.Account.register(data)
+              .then((user: User) => {
+                localStorage.setItem('user', user.token);
+                dispatch(setUser(user.token));
+                navigate('/');
+              })
               .catch(error => handleApiErrors(error)))}
             noValidate sx={{ mt: 1 }}>
             <TextField
@@ -75,7 +84,8 @@ export default function Register() {
               label="Password"
               type="password"
               {...register('password', {
-                required: 'Password is required'
+                required: 'Password is required',
+                validate: value => getPasswordStrengthErrors(value)
               })}
               error={!!errors.password}
               helperText={errors?.password
