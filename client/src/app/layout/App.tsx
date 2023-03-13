@@ -5,8 +5,32 @@ import { Outlet } from 'react-router';
 import { ToastContainer } from 'react-toastify';
 import { useAppDispatch } from '../store/configureStore';
 import { fetchCurrentUserAsnyc } from '../../features/account/accountSlice';
-import { createTheme, ThemeProvider } from '@mui/material';
+import { createTheme, ThemeOptions, ThemeProvider } from '@mui/material';
 import 'react-toastify/dist/ReactToastify.css';
+
+const themeOptions: ThemeOptions = {
+    palette: {
+      mode: 'light',
+      primary: {
+        main: '#00b2a9',
+      },
+      secondary: {
+        main: '#ef426f',
+      },
+      info: {
+        main: '#a8ddda',
+      },
+      error: {
+        main: '#E43C40',
+      },
+      success: {
+        main: '#6aca55',
+      },
+      warning: {
+        main: '#ff8200',
+      },
+    },
+  };
 
 function App() {
 
@@ -26,15 +50,7 @@ function App() {
         initApp().then(() => setLoading(false))
     }, [initApp])
 
-
-    const theme = createTheme({
-        palette: {
-          mode: 'light',
-          background: {
-            default: '#eaeaea'
-          }
-        },
-      })
+    const theme = createTheme(themeOptions);
 
     if (loading) return <span>Loading...</span>
 
