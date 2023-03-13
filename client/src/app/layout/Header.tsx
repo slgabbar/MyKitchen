@@ -1,7 +1,6 @@
-import { Box, AppBar, Toolbar, IconButton, Typography, Button, Badge, List, ListItem } from "@mui/material"
+import { Box, AppBar, Toolbar, Typography, List, ListItem } from "@mui/material"
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-import './styles.css'; 
 
 const rightLinks = [
     {title: 'login', path:'/login'},
@@ -20,6 +19,16 @@ const navStyles = {
     }
 }
 
+const headerStyles = {
+    mb: 4,
+    bgcolor: "",
+    color: "text.secondary",
+    boxShadow: 0,
+    '&.headerAtTop': {
+        bgcolor: 'primary.main',
+    }
+}
+
 export function Header() {
     const [atTop, setAtTop] = useState(false);
 
@@ -34,7 +43,7 @@ export function Header() {
 
     return (
         <>
-            <AppBar className={atTop ? 'headerAtTop' : ''} position='sticky'>
+            <AppBar className={atTop ? 'headerAtTop' : ''} position='sticky' sx={headerStyles}>
                 <Toolbar sx={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
                 <Box display='flex' alignItems='center'>
                     <Typography variant='h6' component={NavLink}

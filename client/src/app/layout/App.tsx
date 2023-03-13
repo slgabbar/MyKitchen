@@ -10,25 +10,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const themeOptions: ThemeOptions = {
     palette: {
-      mode: 'dark',
-      primary: {
-        main: '#00b2a9',
-      },
-      secondary: {
-        main: '#ef426f',
-      },
-      info: {
-        main: '#a8ddda',
-      },
-      error: {
-        main: '#E43C40',
-      },
-      success: {
-        main: '#6aca55',
-      },
-      warning: {
-        main: '#ff8200',
-      },
+      mode: 'light',
     },
   };
 

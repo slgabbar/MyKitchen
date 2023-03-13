@@ -6,14 +6,12 @@ function HomePage() {
     return (
         <>
             <Header/>
-            <Container sx={{backgroundColor: 'red',height:'600px',width: '100%'}}>
-                <Typography>Test</Typography>
-            </Container>
-            <Container sx={{backgroundColor: 'red',height:'600px',width: '100%'}}>
-                <Typography>Test</Typography>
-            </Container><Container sx={{backgroundColor: 'red',height:'600px',width: '100%'}}>
-                <Typography>Test</Typography>
-            </Container>
+            <Container sx={{height:'500px', bgcolor:'red'}}></Container>
+            <Container sx={{height:'500px', bgcolor:'red'}}></Container>
+            <Container sx={{height:'500px', bgcolor:'red'}}></Container>
+            <Container sx={{height:'500px', bgcolor:'red'}}></Container>
+            <Container sx={{height:'500px', bgcolor:'red'}}></Container>
+
         </>
     )
 }
