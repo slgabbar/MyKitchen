@@ -21,21 +21,20 @@ const navStyles = {
 
 const headerStyles = {
     mb: 4,
-    bgcolor: "",
-    color: "text.secondary",
-    boxShadow: 0,
-    '&.headerAtTop': {
-        bgcolor: 'primary.main',
+    boxShadow: 4,
+    borderRadius: '15px',
+    '&.headerAtTop':{
+        boxShadow:0,
     }
 }
 
 export function Header() {
-    const [atTop, setAtTop] = useState(false);
+    const [atTop, setAtTop] = useState(true);
 
     useEffect(() => {
       if (typeof window !== "undefined") {
         window.addEventListener("scroll", () =>
-          setAtTop(window.pageYOffset > 0)
+          setAtTop(window.pageYOffset == 0)
         );
       }
     }, []);
@@ -43,7 +42,7 @@ export function Header() {
 
     return (
         <>
-            <AppBar className={atTop ? 'headerAtTop' : ''} position='sticky' sx={headerStyles}>
+            <AppBar color={atTop ? 'transparent' : 'inherit'} className={atTop ? 'headerAtTop' : ''} position='sticky' sx={headerStyles}>
                 <Toolbar sx={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
                 <Box display='flex' alignItems='center'>
                     <Typography variant='h6' component={NavLink}
