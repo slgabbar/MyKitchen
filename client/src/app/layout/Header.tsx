@@ -1,5 +1,7 @@
 import { Box, AppBar, Toolbar, IconButton, Typography, Button, Badge, List, ListItem } from "@mui/material"
+import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
+import './styles.css'; 
 
 const rightLinks = [
     {title: 'login', path:'/login'},
@@ -18,17 +20,21 @@ const navStyles = {
     }
 }
 
-const headerStyles = {
-    "&html:not([data-scroll='0']) header": {
-        backgroundcolor: 'red !important'
-    },
-}
-
-
 export function Header() {
+    const [atTop, setAtTop] = useState(false);
+
+    useEffect(() => {
+      if (typeof window !== "undefined") {
+        window.addEventListener("scroll", () =>
+          setAtTop(window.pageYOffset > 0)
+        );
+      }
+    }, []);
+
+
     return (
         <>
-            <AppBar position='sticky' sx={headerStyles}>
+            <AppBar className={atTop ? 'headerAtTop' : ''} position='sticky'>
                 <Toolbar sx={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
                 <Box display='flex' alignItems='center'>
                     <Typography variant='h6' component={NavLink}

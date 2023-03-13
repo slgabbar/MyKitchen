@@ -10,7 +10,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const themeOptions: ThemeOptions = {
     palette: {
-      mode: 'light',
+      mode: 'dark',
       primary: {
         main: '#00b2a9',
       },
