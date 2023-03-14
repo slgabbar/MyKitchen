@@ -22,8 +22,8 @@ export default function Login() {
     function handleApiErrors(errors: any) {
       if (errors) {
         errors.forEach((error: string) => {
-          if (error.includes('Username')) {
-            setError('username', {message: error})
+          if (error.includes('Email')) {
+            setError('email', {message: error})
           } else if (error.includes('password')) {
             setError('password', {message: error})
           }
@@ -49,13 +49,13 @@ export default function Login() {
               margin="normal"
               required
               fullWidth
-              label="Username"
+              label="Email"
               autoFocus
-              {...register('username', {
-                required: 'Username is required'
+              {...register('email', {
+                required: 'Email is required'
               })}
-              error={!!errors.username}
-              helperText={errors?.username?.message as string}
+              error={!!errors.email}
+              helperText={errors?.email?.message as string}
             />
             <TextField
               margin="normal"

@@ -25,7 +25,11 @@ export default function Register() {
   function handleApiErrors(errors: any) {
     if (errors) {
       errors.forEach((error: string) => {
-        if (error.includes('Password')) {
+        if (error.includes('First name')) {
+          setError('firstname', {message: error})
+        } else if (error.includes('Last name')) {
+          setError('firstname', {message: error})
+        } else if (error.includes('Password')) {
           setError('password', {message: error})
         } else if (error.includes('Email')) {
           setError('email', {message: error})
@@ -48,18 +52,37 @@ export default function Register() {
               })
               .catch(error => handleApiErrors(error)))}
             noValidate sx={{ mt: 1 }}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              label="Username"
-              autoFocus
-              {...register('username', {
-                required: 'Username is required'
-              })}
-              error={!!errors.username}
-              helperText={errors?.username?.message as string}
-            />
+
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  label="First Name"
+                  autoFocus
+                  {...register('firstname', {
+                    required: 'First name is required'
+                  })}
+                  error={!!errors.firstname}
+                  helperText={errors?.firstname?.message as string}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  label="Last Name"
+                  autoFocus
+                  {...register('lastname', {
+                    required: 'Last name is required'
+                  })}
+                  error={!!errors.lastname}
+                  helperText={errors?.lastname?.message as string}
+                />
+              </Grid>
+            </Grid>
              <TextField
               margin="normal"
               required
