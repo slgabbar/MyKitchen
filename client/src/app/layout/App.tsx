@@ -5,8 +5,30 @@ import { Outlet } from 'react-router';
 import { ToastContainer } from 'react-toastify';
 import { useAppDispatch } from '../store/configureStore';
 import { fetchCurrentUserAsnyc } from '../../features/account/accountSlice';
-import { createTheme, ThemeProvider } from '@mui/material';
+import { createTheme, ThemeOptions, ThemeProvider } from '@mui/material';
 import 'react-toastify/dist/ReactToastify.css';
+
+  const lightTheme: ThemeOptions = {
+    palette: {
+        mode: 'light',
+        background: {
+            default: '#DCDCDC'
+        },
+    },
+  };
+
+   const darkTheme: ThemeOptions = {
+    palette: {
+        mode: 'dark',
+    },
+  };
+
+  const mainAppStyles = {
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  };
 
 function App() {
 
@@ -26,15 +48,7 @@ function App() {
         initApp().then(() => setLoading(false))
     }, [initApp])
 
-
-    const theme = createTheme({
-        palette: {
-          mode: 'light',
-          background: {
-            default: '#eaeaea'
-          }
-        },
-      })
+    const theme = createTheme(lightTheme);
 
     if (loading) return <span>Loading...</span>
 
@@ -42,7 +56,7 @@ function App() {
         <ThemeProvider theme={theme}>
             <ToastContainer position='bottom-right' hideProgressBar theme='colored' />
             <CssBaseline />
-            <Container>
+            <Container sx={mainAppStyles}>
                 <Outlet/>
             </Container>
         </ThemeProvider>

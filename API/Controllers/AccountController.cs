@@ -23,11 +23,11 @@ public class AccountController : BaseApiController
     [HttpPost("login")]
     public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
     {
-        var user = await _userManager.FindByNameAsync(loginDto.UserName);
+        var user = await _userManager.FindByEmailAsync(loginDto.Email);
 
         if (user == null)
         {
-            ModelState.AddModelError("username", "Username not found");
+            ModelState.AddModelError("username", "User not found");
             return ValidationProblem();
         }
 
@@ -51,9 +51,20 @@ public class AccountController : BaseApiController
     {
         var user = new User
         {
-            UserName = registerDto.UserName,
+            FirstName = registerDto.FirstName,
+            LastName = registerDto.LastName,
             Email = registerDto.Email,
+            UserName = registerDto.Email
         };
+
+        if (user.FirstName == null || user.FirstName == "")
+            ModelState.AddModelError("firstname", "First name is required");
+
+        if (user.LastName == null || user.LastName == "")
+            ModelState.AddModelError("lastname", "Last name is required");
+
+        if (!ModelState.IsValid)
+            return ValidationProblem();
 
         var result = await _userManager.CreateAsync(user, registerDto.Password);
 
@@ -75,7 +86,6 @@ public class AccountController : BaseApiController
             Token = await _tokenService.GenerateToken(user)
         };
     }
-
 
     [Authorize]
     [HttpGet("currentUser")]

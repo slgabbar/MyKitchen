@@ -1,12 +1,10 @@
-import Avatar from '@mui/material/Avatar';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { Link, useNavigate } from 'react-router-dom';
-import { Paper } from '@mui/material';
+import { Divider, Paper } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { LoadingButton } from '@mui/lab';
 import agent from "../../app/api/agent";
@@ -27,7 +25,11 @@ export default function Register() {
   function handleApiErrors(errors: any) {
     if (errors) {
       errors.forEach((error: string) => {
-        if (error.includes('Password')) {
+        if (error.includes('First name')) {
+          setError('firstname', {message: error})
+        } else if (error.includes('Last name')) {
+          setError('firstname', {message: error})
+        } else if (error.includes('Password')) {
           setError('password', {message: error})
         } else if (error.includes('Email')) {
           setError('email', {message: error})
@@ -37,13 +39,11 @@ export default function Register() {
   }
 
   return (
-      <Container component={Paper} maxWidth="sm" sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', p: 4}}>
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Sign Up
-          </Typography>
+      <Container component={Paper} maxWidth="xs" sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', margin:'auto', p: 4}}>
+          <Typography component="h1" variant="h5" sx={{fontWeight:'bold', mb:4}}>REACT</Typography>
+          <Typography component="h1" variant="h5" color={'primary.main'} sx={{fontWeight:'bold', mb:2}}>Sign Up</Typography>
+          <Typography variant='subtitle1'>Enter your credentials to continue</Typography>
+          <Divider sx={{width:'100%', my:2}}/>
           <Box component="form" onSubmit={handleSubmit(data => agent.Account.register(data)
               .then((user: User) => {
                 localStorage.setItem('user', user.token);
@@ -52,18 +52,37 @@ export default function Register() {
               })
               .catch(error => handleApiErrors(error)))}
             noValidate sx={{ mt: 1 }}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              label="Username"
-              autoFocus
-              {...register('username', {
-                required: 'Username is required'
-              })}
-              error={!!errors.username}
-              helperText={errors?.username?.message as string}
-            />
+
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  label="First Name"
+                  autoFocus
+                  {...register('firstname', {
+                    required: 'First name is required'
+                  })}
+                  error={!!errors.firstname}
+                  helperText={errors?.firstname?.message as string}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  label="Last Name"
+                  autoFocus
+                  {...register('lastname', {
+                    required: 'Last name is required'
+                  })}
+                  error={!!errors.lastname}
+                  helperText={errors?.lastname?.message as string}
+                />
+              </Grid>
+            </Grid>
              <TextField
               margin="normal"
               required
@@ -114,10 +133,11 @@ export default function Register() {
             >
               Sign Up
             </LoadingButton>
-            <Grid container>
+            <Divider sx={{width:'100%', my:2}}/>
+            <Grid container alignItems='center' justifyContent='center'>
               <Grid item>
-                <Link to="/login">
-                  {"Already have an account? Sign In"}
+                <Link to="/login" style={{color:'inherit',textDecoration:'none'}}>
+                  {"Already have an account?"}
                 </Link>
               </Grid>
             </Grid>
