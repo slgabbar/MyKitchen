@@ -8,9 +8,18 @@ import { fetchCurrentUserAsnyc } from '../../features/account/accountSlice';
 import { createTheme, ThemeOptions, ThemeProvider } from '@mui/material';
 import 'react-toastify/dist/ReactToastify.css';
 
-const themeOptions: ThemeOptions = {
+  const lightTheme: ThemeOptions = {
     palette: {
-      mode: 'light',
+        mode: 'light',
+        background: {
+            default: '#DCDCDC'
+        },
+    },
+  };
+
+   const darkTheme: ThemeOptions = {
+    palette: {
+        mode: 'dark',
     },
   };
 
@@ -39,7 +48,7 @@ function App() {
         initApp().then(() => setLoading(false))
     }, [initApp])
 
-    const theme = createTheme(themeOptions);
+    const theme = createTheme(lightTheme);
 
     if (loading) return <span>Loading...</span>
 
