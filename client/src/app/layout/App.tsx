@@ -10,8 +10,15 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const themeOptions: ThemeOptions = {
     palette: {
-      mode: 'dark',
+      mode: 'light',
     },
+  };
+
+  const mainAppStyles = {
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
   };
 
 function App() {
@@ -40,7 +47,7 @@ function App() {
         <ThemeProvider theme={theme}>
             <ToastContainer position='bottom-right' hideProgressBar theme='colored' />
             <CssBaseline />
-            <Container>
+            <Container sx={mainAppStyles}>
                 <Outlet/>
             </Container>
         </ThemeProvider>
