@@ -1,11 +1,11 @@
 import { Typography } from "@mui/material";
 
-function HomePage() {
+function AboutPage() {
     return (
         <>
-        <Typography>Home</Typography>
+        <Typography>About</Typography>
         </>
     )
 }
 
-export default HomePage;
+export default AboutPage;
