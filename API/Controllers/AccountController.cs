@@ -27,7 +27,7 @@ public class AccountController : BaseApiController
 
         if (user == null)
         {
-            ModelState.AddModelError("username", "User not found");
+            ModelState.AddModelError("email", "User not found");
             return ValidationProblem();
         }
 

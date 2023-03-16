@@ -22,7 +22,7 @@ export default function Login() {
     function handleApiErrors(errors: any) {
       if (errors) {
         errors.forEach((error: string) => {
-          if (error.includes('Email')) {
+          if (error.includes('User')) {
             setError('email', {message: error})
           } else if (error.includes('password')) {
             setError('password', {message: error})
