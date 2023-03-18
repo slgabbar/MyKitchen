@@ -7,7 +7,7 @@ import { useAppDispatch, useAppSelector } from '../store/configureStore';
 import { fetchCurrentUserAsnyc } from '../../features/account/accountSlice';
 import { createTheme, ThemeOptions, ThemeProvider } from '@mui/material';
 import 'react-toastify/dist/ReactToastify.css';
-import Header from './Header';
+import Header from './header/Header';
 
   const lightTheme: ThemeOptions = {
     palette: {
