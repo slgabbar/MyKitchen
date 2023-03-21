@@ -18,17 +18,15 @@ import Header from './header/Header';
     },
   };
 
-   //const darkTheme: ThemeOptions = {
-   // palette: {
-   //     mode: 'dark',
-   // },
-  //};
-
   const mainAppStyles = {
+    minWidth: '100%',
+    padding: '0px 0px 0px 0px !important',
+    paddingReft: 0,
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    margin: '0',
   };
 
 function App() {

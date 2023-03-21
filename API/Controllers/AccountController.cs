@@ -42,6 +42,8 @@ public class AccountController : BaseApiController
         return new UserDto
         {
             Email = user.Email,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
             Token = await _tokenService.GenerateToken(user)
         };
     }
@@ -95,6 +97,8 @@ public class AccountController : BaseApiController
         return new UserDto
         {
             Email = user.Email,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
             Token = await _tokenService.GenerateToken(user)
         };
     }
