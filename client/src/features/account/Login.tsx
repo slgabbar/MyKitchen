@@ -39,8 +39,8 @@ export default function Login() {
           <Divider sx={{width:'100%', my:2}}/>
           <Box component="form" onSubmit={handleSubmit(data => agent.Account.login(data)
             .then((user: User) => {
-              localStorage.setItem('user', user.token);
-              dispatch(setUser(user.token));
+              localStorage.setItem('user', JSON.stringify(user));
+              dispatch(setUser(user));
               navigate('/');
             })
             .catch(error => handleApiErrors(error)))}
@@ -67,8 +67,7 @@ export default function Login() {
                 required: 'Password is required'
               })}
               error={!!errors.password}
-              helperText={errors?.password
-                ?.message as string}
+              helperText={errors?.password?.message as string}
            />
             <LoadingButton
               loading={isSubmitting}

@@ -46,8 +46,8 @@ export default function Register() {
           <Divider sx={{width:'100%', my:2}}/>
           <Box component="form" onSubmit={handleSubmit(data => agent.Account.register(data)
               .then((user: User) => {
-                localStorage.setItem('user', user.token);
-                dispatch(setUser(user.token));
+                localStorage.setItem('user', JSON.stringify(user));
+                dispatch(setUser(user));
                 navigate('/');
               })
               .catch(error => handleApiErrors(error)))}
