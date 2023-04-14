@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice, isAnyOf } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
 import agent from "../../app/api/agent";
 import { User } from "../../app/models/user";
@@ -30,9 +30,9 @@ export const fetchCurrentUserAsnyc = createAsyncThunk<User>(
             if (!localStorage.getItem('user')) {
               return false;  
             }
-            else {
+        else {
                 return true;
-            }
+            }    
         }
     }
 )
