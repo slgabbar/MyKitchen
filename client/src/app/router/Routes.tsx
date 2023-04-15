@@ -5,6 +5,7 @@ import HomePage from "../../features/home/HomePage";
 import App from "../layout/App";
 import RequireAuth from "../layout/RequireAuth";
 import { Error } from "../layout/Error";
+import AccountSettings from "../../features/accountSettings/AccountSettings";
 
 
 export const router = createBrowserRouter([
@@ -18,6 +19,7 @@ export const router = createBrowserRouter([
             ]},
             {path: 'login', element: <Login/> },
             {path: 'register', element: <Register/> },
+            {path: 'account', element: <AccountSettings/> },
         ]
     }
 ]);
