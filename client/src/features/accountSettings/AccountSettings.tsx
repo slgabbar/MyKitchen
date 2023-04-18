@@ -45,20 +45,27 @@ function AccountSettings() {
   };
 
   return (
-    <Box
-      sx={{ flexGrow: 1, bgcolor: 'background.paper', display: 'flex', height: 224 }}
-    >
+    <Box maxHeight='80%' sx={{ flexGrow: 1, bgcolor: 'background.paper', display: 'flex', borderRadius: '15px', paddingY: '5px' }}>
       <Tabs
         orientation="vertical"
         variant="scrollable"
         value={value}
         onChange={handleChange}
-        aria-label="Vertical tabs example"
-        sx={{ borderRight: 1, borderColor: 'divider' }}
+        TabIndicatorProps={{ hidden: true}}
+        sx={{
+            textTransform: 'none',
+            paddingX: '20px',
+            borderRight: 1,
+            borderColor: 'divider',
+            "& button" : {borderRadius:'25px', marginY:'5px'},
+            "& button:hover" : {color:'primary.main'},
+            "& button:active" : {backgroundColor:'primary.light'},
+            "& button.Mui-selected" : {backgroundColor:'primary.light', color:'white'},
+          }}
       >
-        <Tab label="My Profile" {...a11yProps(0)} />
-        <Tab label="Appearance" {...a11yProps(1)} />
-        <Tab label="Security" {...a11yProps(2)} />
+        <Tab sx={{textTransform:'none'}} label="My Profile" {...a11yProps(0)} />
+        <Tab sx={{textTransform:'none'}} label="Appearance" {...a11yProps(1)} />
+        <Tab sx={{textTransform:'none'}} label="Security" {...a11yProps(2)} />
       </Tabs>
       <TabPanel value={value} index={0}>
         Profile settings here...
