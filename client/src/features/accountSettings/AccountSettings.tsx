@@ -3,6 +3,7 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
+import ProfileEdit from "./ProfileEdit";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -22,8 +23,8 @@ function TabPanel(props: TabPanelProps) {
       {...other}
     >
       {value === index && (
-        <Box sx={{ p: 3, width:'1000px' }}>
-          <Typography>{children}</Typography>
+        <Box sx={{ p: 3, width:'800px' }}>
+          <Typography component='span'>{children}</Typography>
         </Box>
       )}
     </div>
@@ -45,7 +46,7 @@ function AccountSettings() {
   };
 
   return (
-    <Box maxHeight='80%' sx={{ flexGrow: 1, bgcolor: 'background.paper', display: 'flex', borderRadius: '15px', paddingY: '5px' }}>
+    <Box maxHeight='80%' sx={{ flexGrow: 1, bgcolor: 'background.paper', display: 'flex', borderRadius: '15px' }}>
       <Tabs
         orientation="vertical"
         variant="scrollable"
@@ -54,9 +55,9 @@ function AccountSettings() {
         TabIndicatorProps={{ hidden: true}}
         sx={{
             textTransform: 'none',
-            paddingX: '20px',
             borderRight: 1,
             borderColor: 'divider',
+            p:2,
             "& button" : {borderRadius:'25px', marginY:'5px'},
             "& button:hover" : {color:'primary.main'},
             "& button:active" : {backgroundColor:'primary.light'},
@@ -68,7 +69,7 @@ function AccountSettings() {
         <Tab sx={{textTransform:'none'}} label="Security" {...a11yProps(2)} />
       </Tabs>
       <TabPanel value={value} index={0}>
-        Profile settings here...
+        <ProfileEdit/>
       </TabPanel>
       <TabPanel value={value} index={1}>
         Appearance settings here...
