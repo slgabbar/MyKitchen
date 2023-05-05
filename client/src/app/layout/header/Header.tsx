@@ -8,7 +8,7 @@ function Header() {
 
   return (
     <Box sx={{ width: '100%' }}>
-      <AppBar position="static" color="default" sx={{boxShadow: 0}}>
+      <AppBar position="static" color="default" sx={{boxShadow: 0, mb:3}}>
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}
             onClick={() => navigate('/')}>

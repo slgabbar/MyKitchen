@@ -4,6 +4,7 @@ using API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 
 namespace API.Controllers;
 
@@ -13,11 +14,13 @@ public class AccountController : BaseApiController
 {
     private readonly UserManager<User> _userManager;
     private readonly TokenService _tokenService;
+    private readonly ApplicationDbContext _context;
 
-    public AccountController(UserManager<User> userManager, TokenService tokenService)
+    public AccountController(UserManager<User> userManager, TokenService tokenService, ApplicationDbContext context)
     {
         _userManager = userManager;
         _tokenService = tokenService;
+        _context = context;
     }
 
     [HttpPost("login")]
@@ -86,6 +89,37 @@ public class AccountController : BaseApiController
         {
             Email = user.Email,
             Token = await _tokenService.GenerateToken(user)
+        };
+    }
+
+    [Authorize]
+    [HttpPost("profileEdit")]
+    public async Task<ActionResult<UserDto>> ProfileEdit(ProfileEditDto profileEditDto)
+    {
+        var user = await _userManager.FindByNameAsync(User.Identity.Name);
+
+        if (profileEditDto.FirstName == null || profileEditDto.FirstName == "")
+            ModelState.AddModelError("firstname", "First Name is required");
+
+        if (profileEditDto.LastName == null || profileEditDto.LastName == "")
+            ModelState.AddModelError("lastname", "Last Name is required");
+
+        if (!ModelState.IsValid)
+            return ValidationProblem();
+
+        var userToUpdate = _context.Users.Single(x => x.Id == user.Id);
+
+        userToUpdate.FirstName = profileEditDto.FirstName;
+        userToUpdate.LastName = profileEditDto.LastName;
+
+        _context.SaveChanges();
+
+        return new UserDto
+        {
+            Email = userToUpdate.Email,
+            FirstName = userToUpdate.FirstName,
+            LastName = userToUpdate.LastName,
+            Token = await _tokenService.GenerateToken(userToUpdate)
         };
     }
 

@@ -56,8 +56,13 @@ const Account = {
     currentUser: () => requests.get('account/currentUser')
 }
 
+const ProfileSettings = {
+    profileEdit: (values: any) => requests.post('account/profileEdit', values),
+}
+
 const agent = {
-    Account
+    Account,
+    ProfileSettings,
 }
 
 export default agent;
