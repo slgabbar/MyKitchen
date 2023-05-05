@@ -4,6 +4,8 @@ import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import ProfileEdit from "./ProfileEdit";
+import { Card, CardContent, Grid } from "@mui/material";
+import { useAppSelector } from "../../app/store/configureStore";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -40,7 +42,7 @@ function a11yProps(index: number) {
 
 function AccountSettings() {
   const [value, setValue] = useState(0);
-
+  const {user} = useAppSelector(state => state.account);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
@@ -69,7 +71,26 @@ function AccountSettings() {
         <Tab sx={{textTransform:'none'}} label="Security" {...a11yProps(2)} />
       </Tabs>
       <TabPanel value={value} index={0}>
-        <ProfileEdit/>
+          <Card variant="outlined">
+            <CardContent>
+              <Box sx={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
+                <Typography sx={{fontWeight: 'bold', mb:2}} color="text.primary">
+                  Personal Information
+                </Typography>
+                <ProfileEdit/>
+              </Box>
+              <Grid container spacing={2}>
+                <Grid item xs={4}>
+                  <Typography color="text.secondary">First Name</Typography>
+                  <Typography>{user?.firstName}</Typography>
+                </Grid>
+                <Grid item xs={4}>
+                  <Typography color="text.secondary">Last Name</Typography>
+                  <Typography>{user?.lastName}</Typography>
+                </Grid>
+              </Grid>
+            </CardContent>
+          </Card>
       </TabPanel>
       <TabPanel value={value} index={1}>
         Appearance settings here...

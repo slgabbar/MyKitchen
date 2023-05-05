@@ -51,7 +51,7 @@ function ProfileEdit() {
 
     return (
         <div>
-            <Button variant="outlined" onClick={handleClickOpen}>
+            <Button sx={{textTransform:'none'}} variant="outlined" size="small" onClick={handleClickOpen}>
                 Edit
             </Button>
             <Dialog open={open} onClose={handleClose}>
