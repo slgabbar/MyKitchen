@@ -4,8 +4,9 @@ import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import ProfileEdit from "./ProfileEdit";
-import { Card, CardContent, Grid } from "@mui/material";
+import { Avatar, Card, CardContent, Grid } from "@mui/material";
 import { useAppSelector } from "../../app/store/configureStore";
+import AvatarEdit from "./AvatarEdit";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -71,7 +72,19 @@ function AccountSettings() {
         <Tab sx={{textTransform:'none'}} label="Security" {...a11yProps(2)} />
       </Tabs>
       <TabPanel value={value} index={0}>
-          <Card variant="outlined">
+
+          <Card variant="outlined" sx={{mb:3}}>
+            <CardContent>
+              <Avatar
+                alt="Remy Sharp"
+                src="/static/images/avatar/1.jpg"
+                sx={{ width: 100, height: 100 }}
+                /> 
+                <AvatarEdit/>         
+            </CardContent>
+          </Card>
+
+          <Card variant="outlined" sx={{mb:3}}>
             <CardContent>
               <Box sx={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
                 <Typography sx={{fontWeight: 'bold', mb:2}} color="text.primary">
@@ -91,6 +104,34 @@ function AccountSettings() {
               </Grid>
             </CardContent>
           </Card>
+          <Card variant="outlined">
+            <CardContent>
+              <Box sx={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
+                <Typography sx={{fontWeight: 'bold', mb:2}} color="text.primary">
+                  Address
+                </Typography>
+                <ProfileEdit/>
+              </Box>
+              <Grid container spacing={2}>
+                <Grid item xs={4}>
+                  <Typography color="text.secondary">City</Typography>
+                  <Typography>{user?.firstName}</Typography>
+                </Grid>
+                <Grid item xs={4}>
+                  <Typography color="text.secondary">State</Typography>
+                  <Typography>{user?.lastName}</Typography>
+                </Grid>
+                <Grid item xs={4}>
+                  <Typography color="text.secondary">Zip Code</Typography>
+                  <Typography>{user?.lastName}</Typography>
+                </Grid>
+                <Grid item xs={4}>
+                  <Typography color="text.secondary">Country</Typography>
+                  <Typography>{user?.lastName}</Typography>
+                </Grid>
+              </Grid>
+            </CardContent>
+          </Card> 
       </TabPanel>
       <TabPanel value={value} index={1}>
         Appearance settings here...

@@ -58,6 +58,8 @@ const Account = {
 
 const ProfileSettings = {
     profileEdit: (values: any) => requests.post('account/profileEdit', values),
+    avatarEdit: (values: any) => requests.post('account/avatarEdit', values),
+
 }
 
 const agent = {

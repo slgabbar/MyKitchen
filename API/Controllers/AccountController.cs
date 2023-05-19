@@ -1,5 +1,6 @@
 using API.Dtos;
 using API.Entities;
+using API.Models.FileModel;
 using API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -122,6 +123,15 @@ public class AccountController : BaseApiController
             Token = await _tokenService.GenerateToken(userToUpdate)
         };
     }
+
+    [Authorize]
+    [HttpPost("avatarEdit")]
+    public ActionResult EditAvatar([FromForm] FileModel file)
+    {
+        var test = file.FormFile;
+        return null;
+    }
+
 
     [Authorize]
     [HttpGet("currentUser")]
