@@ -8,6 +8,6 @@ namespace API.Entities
         public string LastName { get; set; }
 
 
-        //public virtual UserSettings UserSettings { get; set; }
+        public virtual UserSettings UserSettings { get; set; }
     }
 }
