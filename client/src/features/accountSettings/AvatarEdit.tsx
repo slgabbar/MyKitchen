@@ -28,13 +28,18 @@ function AvatarEdit() {
     };
     
     const onSubmit: SubmitHandler<FieldValues> = () => {
-        let formData = new FormData();
-        formData.append("formFile", file!);
-        agent.ProfileSettings.avatarEdit(formData)
-        .then((data) =>
-        {
-            console.log(data);
-        });   
+        if (file && (file['size'] / 1024) > 2048) {
+            alert('file size too big');
+        }
+        else {
+            let formData = new FormData();
+            formData.append("formFile", file!);
+            agent.ProfileSettings.avatarEdit(formData)
+            .then((data) =>
+            {
+                console.log(data);
+            });   
+        }
     } 
 
 
@@ -48,7 +53,7 @@ function AvatarEdit() {
             setDisableRemoveButton(true);
         }
     }
-
+ 
     function handleClearPhoto(event: any) {
         setFile(null);
         setDisableRemoveButton(true);

@@ -18,6 +18,7 @@ export const fetchCurrentUserAsnyc = createAsyncThunk<User>(
         thunkApi.dispatch(setUser(JSON.parse(localStorage.getItem('user')!)));
         try {
             const user = await agent.Account.currentUser();
+            console.log(user);
             localStorage.setItem('user', JSON.stringify(user))
             return user;
         }

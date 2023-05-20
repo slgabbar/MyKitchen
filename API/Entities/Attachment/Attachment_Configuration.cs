@@ -18,7 +18,6 @@ namespace API.Entities
             builder.HasKey(m => m.AttachmentKey);
 
             builder.Property(m => m.FileName).IsRequired();
-            builder.Property(m => m.FileExtension).IsRequired();
             builder.Property(m => m.ContentType).IsRequired();
             builder.Property(m => m.ContentLength).IsRequired();
 

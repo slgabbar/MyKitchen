@@ -5,7 +5,11 @@ using API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using System.IO;
+using System.IO.Compression;
+using System.Linq.Expressions;
 
 namespace API.Controllers;
 
@@ -126,24 +130,79 @@ public class AccountController : BaseApiController
 
     [Authorize]
     [HttpPost("avatarEdit")]
-    public ActionResult EditAvatar([FromForm] FileModel file)
+    public async Task<UserDto> EditAvatar([FromForm] FileModel file)
     {
-        var test = file.FormFile;
-        return null;
-    }
+        var attachment = new Attachment
+        {
+            AttachmentKey = Guid.NewGuid(),
+            FileName = file.FormFile.FileName,
+            ContentLength = file.FormFile.Length,
+            ContentType = file.FormFile.ContentType,
+        };
 
+        using (var stream = new MemoryStream())
+        {
+            await file.FormFile.CopyToAsync(stream);
+            attachment.Blob = new AttachmentBlob
+            {
+                AttachmentKey = attachment.AttachmentKey,
+                Blob = stream.ToArray()
+            };
+        }
 
-    [Authorize]
-    [HttpGet("currentUser")]
-    public async Task<ActionResult<UserDto>> GetCurrentUser()
-    {
+        _context.Attachments.Add(attachment);
+
         var user = await _userManager.FindByNameAsync(User.Identity.Name);
+        var userSettings = _context.UserSettings
+            .SingleOrDefault(x => x.UserId == user.Id);
+        
+        if (userSettings == null)
+        {
+            _context.UserSettings.Add(new UserSettings
+            {
+                UserId = user.Id,
+                AvatarAttachmentKey = attachment.AttachmentKey,
+            });
+        }
+        else
+        {
+            userSettings.AvatarAttachmentKey = attachment.AttachmentKey;
+        }
+
+        await _context.SaveChangesAsync();
+
         return new UserDto
         {
             Email = user.Email,
             FirstName = user.FirstName,
             LastName = user.LastName,
             Token = await _tokenService.GenerateToken(user)
+        };
+     }
+
+    [Authorize]
+    [HttpGet("currentUser")]
+    public async Task<ActionResult<UserDto>> GetCurrentUser()
+    {
+        var identityUser = await _userManager.FindByNameAsync(User.Identity.Name);
+
+        var user = _context.Users
+            .AsNoTracking()
+            .Include(x => x.UserSettings)
+            .ThenInclude(x => x.Avatar)
+            .ThenInclude(x => x.Blob)
+            .Where(x => x.Email == User.Identity.Name)
+            .FirstOrDefault();
+
+        return new UserDto
+        {
+            Email = user.Email,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Token = await _tokenService.GenerateToken(identityUser),
+            ProfilePhotoUrl = user?.UserSettings?.Avatar?.Blob != null
+                ? Convert.ToBase64String(user.UserSettings.Avatar.Blob.Blob)
+                : ""
         };
     }
 }

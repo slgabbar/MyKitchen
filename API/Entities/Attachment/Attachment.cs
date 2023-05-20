@@ -6,9 +6,8 @@ namespace API.Entities
     {
         public Guid AttachmentKey { get; set; }     
         public string FileName { get; set; }
-        public string FileExtension { get; set; }
         public string ContentType { get; set; }
-        public int ContentLength { get; set; }
+        public long ContentLength { get; set; }
 
         public virtual AttachmentBlob Blob { get; set; }
     }
