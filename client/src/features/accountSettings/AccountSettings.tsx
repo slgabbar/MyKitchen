@@ -74,13 +74,21 @@ function AccountSettings() {
       <TabPanel value={value} index={0}>
 
           <Card variant="outlined" sx={{mb:3}}>
-            <CardContent>
-              <Avatar
-                alt="Remy Sharp"
-                src="/static/images/avatar/1.jpg"
-                sx={{ width: 100, height: 100 }}
-                /> 
+            <CardContent sx={{"&:last-child":{pb:2}}}>
+              <Box sx={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
+                <Box sx={{display:'flex',flexDirection:'row'}}>
+                  <Avatar
+                    alt={`${user?.firstName} ${user?.lastName}`}
+                    src={`data:image/jpeg;base64, ${user?.profilePhotoUrl}`}
+                    sx={{ width: 100, height: 100 }}
+                    />
+                    <Box sx={{display:'flex',flexDirection:'column', ml:3, pt:1}}>
+                      <Typography variant="subtitle1">{user?.firstName} {user?.lastName}</Typography>
+                      <Typography variant="subtitle2">{user?.email}</Typography>
+                    </Box> 
+                </Box>
                 <AvatarEdit/>         
+              </Box>
             </CardContent>
           </Card>
 
@@ -104,34 +112,6 @@ function AccountSettings() {
               </Grid>
             </CardContent>
           </Card>
-          <Card variant="outlined">
-            <CardContent>
-              <Box sx={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
-                <Typography sx={{fontWeight: 'bold', mb:2}} color="text.primary">
-                  Address
-                </Typography>
-                <ProfileEdit/>
-              </Box>
-              <Grid container spacing={2}>
-                <Grid item xs={4}>
-                  <Typography color="text.secondary">City</Typography>
-                  <Typography>{user?.firstName}</Typography>
-                </Grid>
-                <Grid item xs={4}>
-                  <Typography color="text.secondary">State</Typography>
-                  <Typography>{user?.lastName}</Typography>
-                </Grid>
-                <Grid item xs={4}>
-                  <Typography color="text.secondary">Zip Code</Typography>
-                  <Typography>{user?.lastName}</Typography>
-                </Grid>
-                <Grid item xs={4}>
-                  <Typography color="text.secondary">Country</Typography>
-                  <Typography>{user?.lastName}</Typography>
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card> 
       </TabPanel>
       <TabPanel value={value} index={1}>
         Appearance settings here...
