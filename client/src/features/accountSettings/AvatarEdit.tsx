@@ -1,25 +1,37 @@
-import { Avatar, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack, TextField } from "@mui/material";
-import { useAppDispatch, useAppSelector } from "../../app/store/configureStore";
+import { Alert, AlertTitle, Avatar, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack } from "@mui/material";
+import { useAppSelector } from "../../app/store/configureStore";
 import { useForm, SubmitHandler, FieldValues } from "react-hook-form";
 import { useState } from "react";
-import { LoadingButton } from "@mui/lab";
 import agent from "../../app/api/agent";
-import { User } from "../../app/models/user";
-import { setUser } from "../account/accountSlice";
+
+const MAX_FILE_SIZE = 2048;
+const VALID_FILE_TYPES = ["image/jpeg", "image/png"]
 
 function AvatarEdit() {
 
+    const {user} = useAppSelector(state => state.account);
     const [open, setOpen] = useState(false);
-    const [disableRemoveButton, setDisableRemoveButton] = useState(true);
-
-    const [file, setFile] = useState(null);
-
-
-    const {handleSubmit, formState:{isSubmitting, errors}} = useForm({
+    
+    const [fileData, setFileData] = useState({
+        file: null,
+        filePreviewUrl: `data:image;base64, ${user?.profilePhotoUrl}`,
+        showClearPhoto: user?.profilePhotoUrl != null,
+        clearPhotoClicked: false,
+        fileError: "",
+    });
+    
+    const {handleSubmit} = useForm({
         mode: 'onSubmit'
     });
 
     const handleClickOpen = () => {
+        setFileData({
+            file: null,
+            filePreviewUrl: `data:image;base64, ${user?.profilePhotoUrl}`,
+            showClearPhoto: user?.profilePhotoUrl != null,
+            clearPhotoClicked: false,
+            fileError: "",
+        })
         setOpen(true);
     };
 
@@ -28,35 +40,51 @@ function AvatarEdit() {
     };
     
     const onSubmit: SubmitHandler<FieldValues> = () => {
-        if (file && (file['size'] / 1024) > 2048) {
-            alert('file size too big');
-        }
-        else {
-            let formData = new FormData();
-            formData.append("formFile", file!);
-            agent.ProfileSettings.avatarEdit(formData)
-            .then((data) =>
-            {
-                console.log(data);
-            });   
-        }
-    } 
+        let formData = new FormData();
+        formData.append("formFile", fileData.file!);
+        agent.ProfileSettings.avatarEdit(formData)
+        .then((data) =>
+        {
+            console.log(data);
+        });   
+    }
 
+    function vaidateFile(file: any) {
+        let error = "";
+        if (!file)
+            error = "Cound not find file.";
+        else if (!VALID_FILE_TYPES.includes(file['type']))
+            error = "Invalid file type. Please upload a file of type JPEG.";
+        else if ((file['size'] / 1024) > MAX_FILE_SIZE)
+            error = "File too large. Max file size is 2MB";
+        setFileData({
+            ...fileData,
+            fileError: error
+        });
+        return error === "";
+    }
 
     function handleChangeEvent(event: any) {
         if (event.target.files[0]) {
-            setFile(event.target.files[0]);
-            setDisableRemoveButton(false);
-        }
-        else {
-            setFile(null);
-            setDisableRemoveButton(true);
+            if (vaidateFile(event.target.files[0])) {
+                setFileData({
+                    ...fileData,
+                    file: event.target.files[0],
+                    filePreviewUrl: URL.createObjectURL(event.target.files[0]),
+                    showClearPhoto: true 
+                });
+            }
         }
     }
  
     function handleClearPhoto(event: any) {
-        setFile(null);
-        setDisableRemoveButton(true);
+        setFileData({
+            file: null,
+            filePreviewUrl: '',
+            showClearPhoto: false,
+            clearPhotoClicked: true,
+            fileError: "",
+        });
     }
 
     return (
@@ -66,11 +94,18 @@ function AvatarEdit() {
             </Button>
             <Dialog open={open} onClose={handleClose} fullWidth={true}>
                 <DialogTitle>Edit Profile Photo</DialogTitle>
+                {
+                    fileData.fileError !== "" && 
+                    <Alert severity="error">
+                        <AlertTitle>Error</AlertTitle>
+                        <strong>{fileData.fileError}</strong>
+                    </Alert>
+                }
                 <Box component='form' onSubmit={handleSubmit(onSubmit)}>
                     <DialogContent sx={{display:'flex',justifyContent:'center',flexDirection:'column', alignItems:'center'}}>
                         <Avatar
-                            alt="Remy Sharp"
-                            src={file ? URL.createObjectURL(file!) : ""}
+                            alt={`${user?.firstName} ${user?.lastName}`}
+                            src={fileData.filePreviewUrl}
                             sx={{ width: 200, height: 200 }}
                         /> 
                         <Stack sx={{mt:2}}>
@@ -81,7 +116,7 @@ function AvatarEdit() {
                                     type="file"
                                     onChange={(e) => handleChangeEvent(e)} />
                             </Button>
-                            <Button variant="text" size="small" color="error" sx={{mt:1,textTransform:'none'}} disabled={disableRemoveButton}
+                            <Button variant="text" size="small" color="error" sx={{mt:1,textTransform:'none'}} disabled={!fileData.showClearPhoto}
                                 onClick={(e) => handleClearPhoto(e)}>
                                 Remove current photo
                             </Button>
@@ -91,7 +126,8 @@ function AvatarEdit() {
                         <Button onClick={handleClose}>
                             Cancel
                         </Button>
-                        <Button variant="contained" type="submit">
+                        <Button variant="contained" type="submit" disabled={fileData.fileError !== "" ||
+                            (!fileData.clearPhotoClicked && fileData.file === null)}>
                             Save
                         </Button>
                     </DialogActions>

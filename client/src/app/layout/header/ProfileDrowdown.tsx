@@ -13,10 +13,7 @@ function ProfileDropdown() {
   const dispatch = useAppDispatch();
 
   const {user} = useAppSelector(state => state.account);
-    let initials = user?.firstName.charAt(0) +  "" + user?.lastName.charAt(0);
-
     const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
-
     const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
   };
@@ -31,7 +28,7 @@ function ProfileDropdown() {
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
               <Avatar
                             alt={user?.firstName! + user?.lastName}
-                            src={`data:image/jpeg;base64, ${user?.profilePhotoUrl}`}
+                            src={`data:image;base64, ${user?.profilePhotoUrl}`}
                         /> 
 
               </IconButton>

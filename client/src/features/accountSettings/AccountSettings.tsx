@@ -79,7 +79,7 @@ function AccountSettings() {
                 <Box sx={{display:'flex',flexDirection:'row'}}>
                   <Avatar
                     alt={`${user?.firstName} ${user?.lastName}`}
-                    src={`data:image/jpeg;base64, ${user?.profilePhotoUrl}`}
+                    src={`data:image;base64, ${user?.profilePhotoUrl}`}
                     sx={{ width: 100, height: 100 }}
                     />
                     <Box sx={{display:'flex',flexDirection:'column', ml:3, pt:1}}>
