@@ -18,12 +18,13 @@ namespace API.Entities
             builder.HasKey(m => m.AttachmentKey);
 
             builder.Property(m => m.FileName).IsRequired();
+            builder.Property(m => m.FileType).IsRequired();
             builder.Property(m => m.ContentType).IsRequired();
             builder.Property(m => m.ContentLength).IsRequired();
 
             builder.HasOne(m => m.Blob)
                 .WithOne()
-                .HasForeignKey<Attachment>(m => m.AttachmentKey);
+                .HasForeignKey<AttachmentBlob>(m => m.AttachmentKey);
         }
     }
 

@@ -1,14 +1,17 @@
 import { Alert, AlertTitle, Avatar, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack } from "@mui/material";
-import { useAppSelector } from "../../app/store/configureStore";
+import { useAppDispatch, useAppSelector } from "../../app/store/configureStore";
 import { useForm, SubmitHandler, FieldValues } from "react-hook-form";
 import { useState } from "react";
 import agent from "../../app/api/agent";
+import { setUser } from "../account/accountSlice";
+
 
 const MAX_FILE_SIZE = 2048;
 const VALID_FILE_TYPES = ["image/jpeg", "image/png"]
 
 function AvatarEdit() {
 
+    const dispatch = useAppDispatch();
     const {user} = useAppSelector(state => state.account);
     const [open, setOpen] = useState(false);
     
@@ -45,8 +48,10 @@ function AvatarEdit() {
         agent.ProfileSettings.avatarEdit(formData)
         .then((data) =>
         {
-            console.log(data);
-        });   
+            dispatch(setUser(data));
+            setOpen(false);
+        })
+        .catch((error) => console.log(error));   
     }
 
     function vaidateFile(file: any) {
