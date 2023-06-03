@@ -17,7 +17,7 @@ function AvatarEdit() {
     
     const [fileData, setFileData] = useState({
         file: null,
-        filePreviewUrl: `data:image;base64, ${user?.profilePhotoUrl}`,
+        filePreviewUrl: user?.profilePhotoUrl,
         showClearPhoto: user?.profilePhotoUrl != null,
         clearPhotoClicked: false,
         fileError: "",
@@ -30,7 +30,7 @@ function AvatarEdit() {
     const handleClickOpen = () => {
         setFileData({
             file: null,
-            filePreviewUrl: `data:image;base64, ${user?.profilePhotoUrl}`,
+            filePreviewUrl: user?.profilePhotoUrl,
             showClearPhoto: user?.profilePhotoUrl != null,
             clearPhotoClicked: false,
             fileError: "",
@@ -44,7 +44,9 @@ function AvatarEdit() {
     
     const onSubmit: SubmitHandler<FieldValues> = () => {
         let formData = new FormData();
-        formData.append("formFile", fileData.file!);
+        formData.append("file.FormFile", fileData.file!);
+        formData.append("ClearPhotoClicked", String(fileData.clearPhotoClicked));
+
         agent.ProfileSettings.avatarEdit(formData)
         .then((data) =>
         {

@@ -1,6 +1,6 @@
 using API.Dtos;
 using API.Entities;
-using API.Models.FileModel;
+using API.Models;
 using API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -47,11 +47,17 @@ public class AccountController : BaseApiController
             return ValidationProblem();
         }
 
+        var avatar = _context.Avatars
+            .AsNoTracking()
+            .Include(x => x.Blob)
+            .FirstOrDefault(x => x.UserId == user.Id);
+
         return new UserDto
         {
             Email = user.Email,
             FirstName = user.FirstName,
             LastName = user.LastName,
+            ProfilePhotoUrl = avatar != null ? $"data:{avatar.ContentType};base64,{Convert.ToBase64String(avatar.Blob.Blob)}" : null,
             Token = await _tokenService.GenerateToken(user)
         };
     }
@@ -130,43 +136,43 @@ public class AccountController : BaseApiController
 
     [Authorize]
     [HttpPost("avatarEdit")]
-    public async Task<UserDto> EditAvatar([FromForm] FileModel file)
+    public async Task<UserDto> EditAvatar([FromForm] AvatarEditDto avatarEditDto)
     {
-        var attachment = new Attachment
-        {
-            AttachmentKey = Guid.NewGuid(),
-            FileName = file.FormFile.FileName,
-            ContentLength = file.FormFile.Length,
-            ContentType = file.FormFile.ContentType,
-        };
-
-        using (var stream = new MemoryStream())
-        {
-            await file.FormFile.CopyToAsync(stream);
-            attachment.Blob = new AttachmentBlob
-            {
-                AttachmentKey = attachment.AttachmentKey,
-                Blob = stream.ToArray()
-            };
-        }
-
-        _context.Attachments.Add(attachment);
-
         var user = await _userManager.FindByNameAsync(User.Identity.Name);
-        var userSettings = _context.UserSettings
-            .SingleOrDefault(x => x.UserId == user.Id);
-        
-        if (userSettings == null)
+
+        var currentAvatar = _context.Avatars.FirstOrDefault(x => x.UserId == user.Id);
+
+        var removeCurrentPhoto = avatarEditDto.ClearPhotoClicked && avatarEditDto.File == null && currentAvatar != null;
+        var updateCurrentAvatar = avatarEditDto.File != null && currentAvatar != null;
+        string avatarBase64 = null;
+
+        if (removeCurrentPhoto || updateCurrentAvatar)
+            _context.Avatars.Remove(currentAvatar!);
+
+        if (avatarEditDto.File != null)
         {
-            _context.UserSettings.Add(new UserSettings
+            var avatar = new Avatar
             {
+                AvatarKey = Guid.NewGuid(),
                 UserId = user.Id,
-                AvatarAttachmentKey = attachment.AttachmentKey,
-            });
-        }
-        else
-        {
-            userSettings.AvatarAttachmentKey = attachment.AttachmentKey;
+                FileName = avatarEditDto.File.FormFile.FileName,
+                ContentLength = avatarEditDto.File.FormFile.Length,
+                ContentType = avatarEditDto.File.FormFile.ContentType,
+            };
+
+            using (var stream = new MemoryStream())
+            {
+                await avatarEditDto.File.FormFile.CopyToAsync(stream);
+                avatar.Blob = new AvatarBlob
+                {
+                    AvatarKey = avatar.AvatarKey,
+                    Blob = stream.ToArray()
+                };
+            }
+
+            avatarBase64 = $"data:{avatar.ContentType};base64,{Convert.ToBase64String(avatar.Blob.Blob)}";
+
+            await _context.Avatars.AddAsync(avatar);
         }
 
         await _context.SaveChangesAsync();
@@ -176,6 +182,7 @@ public class AccountController : BaseApiController
             Email = user.Email,
             FirstName = user.FirstName,
             LastName = user.LastName,
+            ProfilePhotoUrl = avatarBase64,
             Token = await _tokenService.GenerateToken(user)
         };
      }
@@ -184,25 +191,29 @@ public class AccountController : BaseApiController
     [HttpGet("currentUser")]
     public async Task<ActionResult<UserDto>> GetCurrentUser()
     {
-        var identityUser = await _userManager.FindByNameAsync(User.Identity.Name);
+        var identityUser = await _userManager.FindByNameAsync(User.Identity!.Name);
+        var userToken = await _tokenService.GenerateToken(identityUser);
 
         var user = _context.Users
-            .AsNoTracking()
-            .Include(x => x.UserSettings)
-            .ThenInclude(x => x.Avatar)
-            .ThenInclude(x => x.Blob)
-            .Where(x => x.Email == User.Identity.Name)
-            .FirstOrDefault();
+                .AsNoTracking()
+                .Include(x => x.Avatar)
+                .ThenInclude(x => x.Blob)
+                .Where(x => x.UserName == User.Identity!.Name)
+                .FirstOrDefault();
 
-        return new UserDto
+        var avatarBase64 = user?.Avatar?.Blob?.Blob != null
+            ? $"data:{user.Avatar.ContentType};base64,{Convert.ToBase64String(user.Avatar.Blob.Blob)}"
+            : null;
+
+        var userDto = new UserDto
         {
             Email = user.Email,
             FirstName = user.FirstName,
             LastName = user.LastName,
-            Token = await _tokenService.GenerateToken(identityUser),
-            ProfilePhotoUrl = user?.UserSettings?.Avatar?.Blob != null
-                ? Convert.ToBase64String(user.UserSettings.Avatar.Blob.Blob)
-                : ""
+            ProfilePhotoUrl = avatarBase64,
+            Token = userToken,
         };
+
+        return userDto;
     }
 }

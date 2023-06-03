@@ -1,4 +1,4 @@
-﻿namespace API.Models.FileModel
+﻿namespace API.Models
 {
     public class FileModel
     {

@@ -28,7 +28,7 @@ function ProfileDropdown() {
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
               <Avatar
                             alt={user?.firstName! + user?.lastName}
-                            src={`data:image;base64, ${user?.profilePhotoUrl}`}
+                            src={user?.profilePhotoUrl}
                         /> 
 
               </IconButton>

@@ -7,7 +7,6 @@ namespace API.Entities
         public string FirstName { get; set; }
         public string LastName { get; set; }
 
-
-        public virtual UserSettings UserSettings { get; set; }
+        public virtual Avatar Avatar { get; set; }
     }
 }

@@ -4,6 +4,7 @@ using API.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230531134814_RemovedFileTypeOnAttachmentTable")]
+    partial class RemovedFileTypeOnAttachmentTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,10 +25,9 @@ namespace API.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("API.Entities.Avatar", b =>
+            modelBuilder.Entity("API.Entities.Attachment", b =>
                 {
-                    b.Property<Guid>("AvatarKey")
-                        .ValueGeneratedOnAdd()
+                    b.Property<Guid>("AttachmentKey")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<long>("ContentLength")
@@ -39,36 +41,23 @@ namespace API.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                    b.HasKey("AttachmentKey");
 
-                    b.HasKey("AvatarKey");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("Avatar", (string)null);
+                    b.ToTable("Attachment", (string)null);
                 });
 
-            modelBuilder.Entity("API.Entities.AvatarBlob", b =>
+            modelBuilder.Entity("API.Entities.AttachmentBlob", b =>
                 {
-                    b.Property<Guid>("AvatarBlobKey")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("AvatarKey")
+                    b.Property<Guid>("AttachmentKey")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<byte[]>("Blob")
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
 
-                    b.HasKey("AvatarBlobKey");
+                    b.HasKey("AttachmentKey");
 
-                    b.HasIndex("AvatarKey")
-                        .IsUnique();
-
-                    b.ToTable("AvatarBlob", (string)null);
+                    b.ToTable("AttachmentBlob", (string)null);
                 });
 
             modelBuilder.Entity("API.Entities.Role", b =>
@@ -171,6 +160,19 @@ namespace API.Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("API.Entities.UserSettings", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("AvatarAttachmentKey")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("UserSettings", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -276,24 +278,31 @@ namespace API.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("API.Entities.Avatar", b =>
+            modelBuilder.Entity("API.Entities.Attachment", b =>
                 {
-                    b.HasOne("API.Entities.User", "User")
+                    b.HasOne("API.Entities.UserSettings", null)
                         .WithOne("Avatar")
-                        .HasForeignKey("API.Entities.Avatar", "UserId");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("API.Entities.AvatarBlob", b =>
-                {
-                    b.HasOne("API.Entities.Avatar", "Avatar")
-                        .WithOne("Blob")
-                        .HasForeignKey("API.Entities.AvatarBlob", "AvatarKey")
+                        .HasForeignKey("API.Entities.Attachment", "AttachmentKey")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
 
-                    b.Navigation("Avatar");
+            modelBuilder.Entity("API.Entities.AttachmentBlob", b =>
+                {
+                    b.HasOne("API.Entities.Attachment", null)
+                        .WithOne("Blob")
+                        .HasForeignKey("API.Entities.AttachmentBlob", "AttachmentKey")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("API.Entities.UserSettings", b =>
+                {
+                    b.HasOne("API.Entities.User", null)
+                        .WithOne("UserSettings")
+                        .HasForeignKey("API.Entities.UserSettings", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -347,13 +356,19 @@ namespace API.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("API.Entities.Avatar", b =>
+            modelBuilder.Entity("API.Entities.Attachment", b =>
                 {
                     b.Navigation("Blob")
                         .IsRequired();
                 });
 
             modelBuilder.Entity("API.Entities.User", b =>
+                {
+                    b.Navigation("UserSettings")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("API.Entities.UserSettings", b =>
                 {
                     b.Navigation("Avatar")
                         .IsRequired();
