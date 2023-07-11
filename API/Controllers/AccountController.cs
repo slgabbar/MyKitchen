@@ -21,46 +21,54 @@ public class AccountController : BaseApiController
     private readonly TokenService _tokenService;
     private readonly ApplicationDbContext _context;
 
-    public AccountController(UserManager<User> userManager, TokenService tokenService, ApplicationDbContext context)
+    private readonly IUserService _userService;
+
+    public AccountController(UserManager<User> userManager, TokenService tokenService, ApplicationDbContext context,
+        IUserService userService)
     {
         _userManager = userManager;
         _tokenService = tokenService;
         _context = context;
+        _userService = userService;
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
-    {
-        var user = await _userManager.FindByEmailAsync(loginDto.Email);
+    public async Task<ActionResult<UserDto>> Login(LoginDto loginDto) =>
+        await _userService.LoginUser(loginDto);
 
-        if (user == null)
-        {
-            ModelState.AddModelError("email", "User not found");
-            return ValidationProblem();
-        }
+    //[HttpPost("login")]
+    //public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
+    //{
+    //    var user = await _userManager.FindByEmailAsync(loginDto.Email);
 
-        var result = await _userManager.CheckPasswordAsync(user, loginDto.Password);
+    //    if (user == null)
+    //    {
+    //        ModelState.AddModelError("email", "User not found");
+    //        return ValidationProblem();
+    //    }
 
-        if (!result)
-        {
-            ModelState.AddModelError("password", "Invalid password");
-            return ValidationProblem();
-        }
+    //    var result = await _userManager.CheckPasswordAsync(user, loginDto.Password);
 
-        var avatar = _context.Avatars
-            .AsNoTracking()
-            .Include(x => x.Blob)
-            .FirstOrDefault(x => x.UserId == user.Id);
+    //    if (!result)
+    //    {
+    //        ModelState.AddModelError("password", "Invalid password");
+    //        return ValidationProblem();
+    //    }
 
-        return new UserDto
-        {
-            Email = user.Email,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            ProfilePhotoUrl = avatar != null ? $"data:{avatar.ContentType};base64,{Convert.ToBase64String(avatar.Blob.Blob)}" : null,
-            Token = await _tokenService.GenerateToken(user)
-        };
-    }
+    //    var avatar = _context.Avatars
+    //        .AsNoTracking()
+    //        .Include(x => x.Blob)
+    //        .FirstOrDefault(x => x.UserId == user.Id);
+
+    //    return new UserDto
+    //    {
+    //        Email = user.Email,
+    //        FirstName = user.FirstName,
+    //        LastName = user.LastName,
+    //        ProfilePhotoUrl = avatar != null ? $"data:{avatar.ContentType};base64,{Convert.ToBase64String(avatar.Blob.Blob)}" : null,
+    //        Token = await _tokenService.GenerateToken(user)
+    //    };
+    //}
 
     [HttpPost("register")]
     public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
@@ -189,31 +197,6 @@ public class AccountController : BaseApiController
 
     [Authorize]
     [HttpGet("currentUser")]
-    public async Task<ActionResult<UserDto>> GetCurrentUser()
-    {
-        var identityUser = await _userManager.FindByNameAsync(User.Identity!.Name);
-        var userToken = await _tokenService.GenerateToken(identityUser);
-
-        var user = _context.Users
-                .AsNoTracking()
-                .Include(x => x.Avatar)
-                .ThenInclude(x => x.Blob)
-                .Where(x => x.UserName == User.Identity!.Name)
-                .FirstOrDefault();
-
-        var avatarBase64 = user?.Avatar?.Blob?.Blob != null
-            ? $"data:{user.Avatar.ContentType};base64,{Convert.ToBase64String(user.Avatar.Blob.Blob)}"
-            : null;
-
-        var userDto = new UserDto
-        {
-            Email = user.Email,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            ProfilePhotoUrl = avatarBase64,
-            Token = userToken,
-        };
-
-        return userDto;
-    }
+    public async Task<ActionResult<UserDto>> GetCurrentUser() =>
+        await _userService.GetCurrentUserAsync(User.Identity!.Name);
 }
