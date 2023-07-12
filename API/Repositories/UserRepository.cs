@@ -17,13 +17,13 @@ namespace API.Repositories
             .Include(x => x.Avatar)
             .ThenInclude(x => x.Blob)
             .Where(x => x.Email == email)
-            .SingleAsync();
+            .SingleOrDefaultAsync();
 
         public async Task<User> GetUserByUserNameAsync(string userName) => await _context.Users
             .AsNoTracking()
             .Include(x => x.Avatar)
             .ThenInclude(x => x.Blob)
             .Where(x => x.UserName == userName)
-            .SingleAsync();
+            .SingleOrDefaultAsync();
     }
 }
