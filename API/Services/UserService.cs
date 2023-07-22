@@ -129,5 +129,25 @@ namespace API.Services
 
             return commandResult;
         }
+
+        public async Task<CommandResult<UserDto>> AvatarEdit(string userName, AvatarEditDto avatarEditDto)
+        {
+            var user = await _userRepository.UpdateAvatar(userName, avatarEditDto);
+
+            var profilePhotoUrl = user?.Avatar?.Blob?.Blob != null
+                    ? $"data:{user.Avatar.ContentType};base64,{Convert.ToBase64String(user.Avatar.Blob.Blob)}"
+                    : null;
+
+            var userDto = new UserDto
+            {
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                ProfilePhotoUrl = profilePhotoUrl,
+                Token = await _tokenService.GenerateToken(user)
+            };
+
+            return new CommandResult<UserDto>(userDto);
+        }
     }
 }

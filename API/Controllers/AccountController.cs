@@ -17,17 +17,10 @@ namespace API.Controllers;
 [Route("[controller]")]
 public class AccountController : BaseApiController
 {
-    private readonly UserManager<User> _userManager;
-    private readonly TokenService _tokenService;
-    private readonly ApplicationDbContext _context;
     private readonly IUserService _userService;
 
-    public AccountController(UserManager<User> userManager, TokenService tokenService, ApplicationDbContext context,
-        IUserService userService)
+    public AccountController(IUserService userService)
     {
-        _userManager = userManager;
-        _tokenService = tokenService;
-        _context = context;
         _userService = userService;
     }
 
@@ -46,56 +39,8 @@ public class AccountController : BaseApiController
 
     [Authorize]
     [HttpPost("avatarEdit")]
-    public async Task<UserDto> EditAvatar([FromForm] AvatarEditDto avatarEditDto)
-    {
-        var user = await _userManager.FindByNameAsync(User.Identity.Name);
-
-        var currentAvatar = _context.Avatars.FirstOrDefault(x => x.UserId == user.Id);
-
-        var removeCurrentPhoto = avatarEditDto.ClearPhotoClicked && avatarEditDto.File == null && currentAvatar != null;
-        var updateCurrentAvatar = avatarEditDto.File != null && currentAvatar != null;
-        string avatarBase64 = null;
-
-        if (removeCurrentPhoto || updateCurrentAvatar)
-            _context.Avatars.Remove(currentAvatar!);
-
-        if (avatarEditDto.File != null)
-        {
-            var avatar = new Avatar
-            {
-                AvatarKey = Guid.NewGuid(),
-                UserId = user.Id,
-                FileName = avatarEditDto.File.FormFile.FileName,
-                ContentLength = avatarEditDto.File.FormFile.Length,
-                ContentType = avatarEditDto.File.FormFile.ContentType,
-            };
-
-            using (var stream = new MemoryStream())
-            {
-                await avatarEditDto.File.FormFile.CopyToAsync(stream);
-                avatar.Blob = new AvatarBlob
-                {
-                    AvatarKey = avatar.AvatarKey,
-                    Blob = stream.ToArray()
-                };
-            }
-
-            avatarBase64 = $"data:{avatar.ContentType};base64,{Convert.ToBase64String(avatar.Blob.Blob)}";
-
-            await _context.Avatars.AddAsync(avatar);
-        }
-
-        await _context.SaveChangesAsync();
-
-        return new UserDto
-        {
-            Email = user.Email,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            ProfilePhotoUrl = avatarBase64,
-            Token = await _tokenService.GenerateToken(user)
-        };
-     }
+    public async Task<ActionResult<UserDto>> EditAvatar([FromForm] AvatarEditDto avatarEditDto) =>
+        CommandResult(await _userService.AvatarEdit(User.Identity!.Name!, avatarEditDto));
 
     [Authorize]
     [HttpGet("currentUser")]

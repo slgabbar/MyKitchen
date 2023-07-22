@@ -9,7 +9,9 @@ namespace API.Services
         Task<CommandResult<UserDto>> RegisterUser(RegisterDto registerDto);
 
         Task<CommandResult<UserDto>> ProfileEdit(string userName, ProfileEditDto profileEditDto);
-        
+
+        Task<CommandResult<UserDto>> AvatarEdit(string userName, AvatarEditDto avatarEditDto);
+
         Task<UserDto> GetCurrentUserAsync(string userName);
     }
 }
