@@ -1,4 +1,5 @@
-﻿using API.Entities;
+﻿using API.Dtos;
+using API.Entities;
 
 namespace API.Repositories
 {
@@ -6,5 +7,6 @@ namespace API.Repositories
     {
         Task<User?> GetUserByEmailAsync(string email);
         Task<User?> GetUserByUserNameAsync(string userName);
+        Task<User> UpdateUserProfile(string userName, ProfileEditDto profileEditDto);
     }
 }

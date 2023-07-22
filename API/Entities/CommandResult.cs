@@ -7,6 +7,8 @@ namespace API.Services
         public List<string>? ErrorMessages { get; set; }
         public T? Result { get; set; }
 
+        public CommandResult() { }
+
         public CommandResult(T result)
         {
             Result = result;
@@ -23,6 +25,11 @@ namespace API.Services
                 ErrorMessages = new List<string> { error };
             else
                 ErrorMessages.Add(error);
+        }
+
+        public void SetResult(T result)
+        {
+            Result = result;
         }
 
         public bool IsFailure => ErrorMessages?.Any() ?? false;

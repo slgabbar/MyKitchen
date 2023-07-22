@@ -3,6 +3,7 @@ using API.Entities;
 using API.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Services
 {
@@ -95,6 +96,38 @@ namespace API.Services
                 ProfilePhotoUrl = avatarBase64,
                 Token = userToken,
             };
+        }
+
+        public async Task<CommandResult<UserDto>> ProfileEdit(string userName, ProfileEditDto profileEditDto)
+        {
+            var commandResult = new CommandResult<UserDto>();
+
+            if (profileEditDto.FirstName == null || profileEditDto.FirstName == "")
+                commandResult.AddError("First Name is required");
+
+            if (profileEditDto.LastName == null || profileEditDto.LastName == "")
+                commandResult.AddError("Last Name is required");
+
+            if (!commandResult.IsFailure)
+            {
+                var user = await _userRepository.UpdateUserProfile(userName, profileEditDto);
+
+                var userToken = await _tokenService.GenerateToken(user);
+                var profilePhotoUrl = user?.Avatar?.Blob?.Blob != null
+                    ? $"data:{user.Avatar.ContentType};base64,{Convert.ToBase64String(user.Avatar.Blob.Blob)}"
+                    : null;
+
+                commandResult.SetResult(new UserDto
+                {
+                    Email = user!.Email,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    ProfilePhotoUrl = profilePhotoUrl,
+                    Token = userToken
+                });
+            }
+
+            return commandResult;
         }
     }
 }

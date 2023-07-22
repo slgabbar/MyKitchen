@@ -20,7 +20,6 @@ public class AccountController : BaseApiController
     private readonly UserManager<User> _userManager;
     private readonly TokenService _tokenService;
     private readonly ApplicationDbContext _context;
-
     private readonly IUserService _userService;
 
     public AccountController(UserManager<User> userManager, TokenService tokenService, ApplicationDbContext context,
@@ -42,34 +41,8 @@ public class AccountController : BaseApiController
 
     [Authorize]
     [HttpPost("profileEdit")]
-    public async Task<ActionResult<UserDto>> ProfileEdit(ProfileEditDto profileEditDto)
-    {
-        var user = await _userManager.FindByNameAsync(User.Identity.Name);
-
-        if (profileEditDto.FirstName == null || profileEditDto.FirstName == "")
-            ModelState.AddModelError("firstname", "First Name is required");
-
-        if (profileEditDto.LastName == null || profileEditDto.LastName == "")
-            ModelState.AddModelError("lastname", "Last Name is required");
-
-        if (!ModelState.IsValid)
-            return ValidationProblem();
-
-        var userToUpdate = _context.Users.Single(x => x.Id == user.Id);
-
-        userToUpdate.FirstName = profileEditDto.FirstName;
-        userToUpdate.LastName = profileEditDto.LastName;
-
-        _context.SaveChanges();
-
-        return new UserDto
-        {
-            Email = userToUpdate.Email,
-            FirstName = userToUpdate.FirstName,
-            LastName = userToUpdate.LastName,
-            Token = await _tokenService.GenerateToken(userToUpdate)
-        };
-    }
+    public async Task<ActionResult<UserDto>> ProfileEdit(ProfileEditDto profileEditDto) =>
+        CommandResult(await _userService.ProfileEdit(User.Identity!.Name!, profileEditDto));
 
     [Authorize]
     [HttpPost("avatarEdit")]
