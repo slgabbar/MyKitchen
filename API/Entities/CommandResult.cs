@@ -4,6 +4,7 @@ namespace API.Services
 {
     public class CommandResult<T>
     {
+        public FluentValidation.Results.ValidationResult? ValidationResult { get; set; }
         public List<string>? ErrorMessages { get; set; }
         public T? Result { get; set; }
 
@@ -19,6 +20,11 @@ namespace API.Services
             ErrorMessages = errorMessages.ToList();
         }
 
+        public CommandResult(FluentValidation.Results.ValidationResult validationResult)
+        {
+            ValidationResult = validationResult;
+        }
+
         public void AddError(string error)
         {
             if (ErrorMessages == null)
@@ -32,6 +38,7 @@ namespace API.Services
             Result = result;
         }
 
-        public bool IsFailure => ErrorMessages?.Any() ?? false;
+        public bool IsFailure => (ErrorMessages?.Any() ?? false)
+            || (!ValidationResult?.IsValid ?? false);
     }
 }

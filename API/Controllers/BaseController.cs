@@ -1,6 +1,7 @@
 ﻿using API.Dtos;
 using API.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace API.Controllers
 {
@@ -15,6 +16,11 @@ namespace API.Controllers
                 command.ErrorMessages?.ForEach(error =>
                 {
                     ModelState.AddModelError("", error);
+                });
+
+                command.ValidationResult?.Errors?.ForEach(error =>
+                {
+                    ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
                 });
 
                 return ValidationProblem();

@@ -1,6 +1,7 @@
 ﻿using API.Dtos;
 using API.Entities;
 using API.Repositories;
+using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,11 +13,14 @@ namespace API.Services
         private readonly UserManager<User> _userManager;
         private readonly TokenService _tokenService;
         private readonly IUserRepository _userRepository;
-        public UserService(UserManager<User> userManager, TokenService tokenService, IUserRepository userRepository)
+        private readonly IValidator<ProfileEditDto> _profileEditValidator;
+        public UserService(UserManager<User> userManager, TokenService tokenService,
+            IUserRepository userRepository, IValidator<ProfileEditDto> profileEditValidator)
         {
             _userManager = userManager;
             _tokenService = tokenService;
             _userRepository = userRepository;
+            _profileEditValidator = profileEditValidator;
         }
 
         public async Task<CommandResult<UserDto>> LoginUser(LoginDto loginDto)
@@ -100,34 +104,28 @@ namespace API.Services
 
         public async Task<CommandResult<UserDto>> ProfileEdit(string userName, ProfileEditDto profileEditDto)
         {
-            var commandResult = new CommandResult<UserDto>();
+            var validationResult = await _profileEditValidator.ValidateAsync(profileEditDto);
 
-            if (profileEditDto.FirstName == null || profileEditDto.FirstName == "")
-                commandResult.AddError("First Name is required");
+            if (!validationResult.IsValid)
+                return new CommandResult<UserDto>(validationResult);
 
-            if (profileEditDto.LastName == null || profileEditDto.LastName == "")
-                commandResult.AddError("Last Name is required");
+            var user = await _userRepository.UpdateUserProfile(userName, profileEditDto);
 
-            if (!commandResult.IsFailure)
+            var userToken = await _tokenService.GenerateToken(user);
+            var profilePhotoUrl = user?.Avatar?.Blob?.Blob != null
+                ? $"data:{user.Avatar.ContentType};base64,{Convert.ToBase64String(user.Avatar.Blob.Blob)}"
+                : null;
+
+            var userDto = new UserDto
             {
-                var user = await _userRepository.UpdateUserProfile(userName, profileEditDto);
+                Email = user!.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                ProfilePhotoUrl = profilePhotoUrl,
+                Token = userToken
+            };
 
-                var userToken = await _tokenService.GenerateToken(user);
-                var profilePhotoUrl = user?.Avatar?.Blob?.Blob != null
-                    ? $"data:{user.Avatar.ContentType};base64,{Convert.ToBase64String(user.Avatar.Blob.Blob)}"
-                    : null;
-
-                commandResult.SetResult(new UserDto
-                {
-                    Email = user!.Email,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    ProfilePhotoUrl = profilePhotoUrl,
-                    Token = userToken
-                });
-            }
-
-            return commandResult;
+            return new CommandResult<UserDto>(userDto);
         }
 
         public async Task<CommandResult<UserDto>> AvatarEdit(string userName, AvatarEditDto avatarEditDto)
