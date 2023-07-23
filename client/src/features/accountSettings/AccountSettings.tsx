@@ -4,7 +4,7 @@ import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import ProfileEdit from "./ProfileEdit";
-import { Avatar, Card, CardContent, Grid } from "@mui/material";
+import { Avatar, Card, CardContent, Container, Grid } from "@mui/material";
 import { useAppSelector } from "../../app/store/configureStore";
 import AvatarEdit from "./AvatarEdit";
 
@@ -23,12 +23,13 @@ function TabPanel(props: TabPanelProps) {
       hidden={value !== index}
       id={`vertical-tabpanel-${index}`}
       aria-labelledby={`vertical-tab-${index}`}
+      style={{'flexGrow': '1'}}
       {...other}
     >
       {value === index && (
-        <Box sx={{ p: 3, width:'800px' }}>
+        <Container sx={{ p: 3 }}>
           <Typography component='span'>{children}</Typography>
-        </Box>
+        </Container>
       )}
     </div>
   );
@@ -49,7 +50,14 @@ function AccountSettings() {
   };
 
   return (
-    <Box maxHeight='80%' sx={{ flexGrow: 1, bgcolor: 'background.paper', display: 'flex', borderRadius: '15px' }}>
+    <Container fixed maxWidth = 'md' disableGutters={true} sx={
+      { 
+        flexGrow: 1,
+        bgcolor: 'background.paper',
+        display: 'flex', 
+        borderRadius: '15px', 
+        mb:3, 
+      }}>
       <Tabs
         orientation="vertical"
         variant="scrollable"
@@ -72,8 +80,7 @@ function AccountSettings() {
         <Tab sx={{textTransform:'none'}} label="Security" {...a11yProps(2)} />
       </Tabs>
       <TabPanel value={value} index={0}>
-
-          <Card variant="outlined" sx={{mb:3}}>
+          <Card variant="outlined" sx={{width:'100%', mb:3}}>
             <CardContent sx={{"&:last-child":{pb:2}}}>
               <Box sx={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
                 <Box sx={{display:'flex',flexDirection:'row'}}>
@@ -119,7 +126,7 @@ function AccountSettings() {
       <TabPanel value={value} index={2}>
         email change and password change here...
       </TabPanel>
-    </Box>
+    </Container>
   );
 }
 
