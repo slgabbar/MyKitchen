@@ -1,6 +1,6 @@
 ﻿using API.Dtos;
 using API.Entities;
-using API.Repositories;
+using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,17 +11,25 @@ namespace API.Services
     {
         private readonly UserManager<User> _userManager;
         private readonly TokenService _tokenService;
-        private readonly IUserRepository _userRepository;
-        public UserService(UserManager<User> userManager, TokenService tokenService, IUserRepository userRepository)
+        private readonly ApplicationDbContext _context;
+        private readonly IValidator<ProfileEditDto> _profileEditValidator;
+        public UserService(UserManager<User> userManager, TokenService tokenService,
+            ApplicationDbContext context, IValidator<ProfileEditDto> profileEditValidator)
         {
             _userManager = userManager;
             _tokenService = tokenService;
-            _userRepository = userRepository;
+            _context = context;
+            _profileEditValidator = profileEditValidator;
         }
 
         public async Task<CommandResult<UserDto>> LoginUser(LoginDto loginDto)
         {
-            var user = await _userRepository.GetUserByEmailAsync(loginDto.Email);
+            var user = await _context.Users
+                .AsNoTracking()
+                .Include(x => x.Avatar)
+                .ThenInclude(x => x.Blob)
+                .FirstOrDefaultAsync(x => x.Email == loginDto.Email);
+
             if (user == null)
                 return new CommandResult<UserDto>("User not found");
 
@@ -81,8 +89,13 @@ namespace API.Services
 
         public async Task<UserDto> GetCurrentUserAsync(string userName)
         {
-            var user = await _userRepository.GetUserByUserNameAsync(userName);
-            var userToken = await _tokenService.GenerateToken(user);
+            var user = await _context.Users
+                .AsNoTracking()
+                .Include(x => x.Avatar)
+                .ThenInclude(x => x.Blob)
+                .FirstOrDefaultAsync(x => x.UserName == userName);
+
+            var userToken = await _tokenService.GenerateToken(user!);
 
             var avatarBase64 = user?.Avatar?.Blob?.Blob != null
                 ? $"data:{user.Avatar.ContentType};base64,{Convert.ToBase64String(user.Avatar.Blob.Blob)}"
@@ -100,39 +113,82 @@ namespace API.Services
 
         public async Task<CommandResult<UserDto>> ProfileEdit(string userName, ProfileEditDto profileEditDto)
         {
-            var commandResult = new CommandResult<UserDto>();
+            var validationResult = await _profileEditValidator.ValidateAsync(profileEditDto);
 
-            if (profileEditDto.FirstName == null || profileEditDto.FirstName == "")
-                commandResult.AddError("First Name is required");
+            if (!validationResult.IsValid)
+                return new CommandResult<UserDto>(validationResult);
 
-            if (profileEditDto.LastName == null || profileEditDto.LastName == "")
-                commandResult.AddError("Last Name is required");
+            var user = await _context.Users
+               .Include(x => x.Avatar)
+               .ThenInclude(x => x.Blob)
+               .FirstAsync(x => x.UserName == userName);
 
-            if (!commandResult.IsFailure)
+            user.FirstName = profileEditDto.FirstName;
+            user.LastName = profileEditDto.LastName;
+
+            await _context.SaveChangesAsync();
+
+            var userToken = await _tokenService.GenerateToken(user);
+            var profilePhotoUrl = user?.Avatar?.Blob?.Blob != null
+                ? $"data:{user.Avatar.ContentType};base64,{Convert.ToBase64String(user.Avatar.Blob.Blob)}"
+                : null;
+
+            var userDto = new UserDto
             {
-                var user = await _userRepository.UpdateUserProfile(userName, profileEditDto);
+                Email = user!.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                ProfilePhotoUrl = profilePhotoUrl,
+                Token = userToken
+            };
 
-                var userToken = await _tokenService.GenerateToken(user);
-                var profilePhotoUrl = user?.Avatar?.Blob?.Blob != null
-                    ? $"data:{user.Avatar.ContentType};base64,{Convert.ToBase64String(user.Avatar.Blob.Blob)}"
-                    : null;
-
-                commandResult.SetResult(new UserDto
-                {
-                    Email = user!.Email,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    ProfilePhotoUrl = profilePhotoUrl,
-                    Token = userToken
-                });
-            }
-
-            return commandResult;
+            return new CommandResult<UserDto>(userDto);
         }
 
         public async Task<CommandResult<UserDto>> AvatarEdit(string userName, AvatarEditDto avatarEditDto)
         {
-            var user = await _userRepository.UpdateAvatar(userName, avatarEditDto);
+            var user = await _context.Users
+                .AsNoTracking()
+                .SingleAsync(x => x.UserName == userName);
+
+            var currentAvatar = _context.Avatars.FirstOrDefault(x => x.UserId == user.Id);
+
+            var removeCurrentPhoto = avatarEditDto.ClearPhotoClicked && avatarEditDto.File == null && currentAvatar != null;
+            var updateCurrentAvatar = avatarEditDto.File != null && currentAvatar != null;
+            string avatarBase64 = null;
+
+            if (removeCurrentPhoto || updateCurrentAvatar)
+                _context.Avatars.Remove(currentAvatar!);
+
+            if (avatarEditDto.File != null)
+            {
+                var avatar = new Avatar
+                {
+                    AvatarKey = Guid.NewGuid(),
+                    UserId = user.Id,
+                    FileName = avatarEditDto.File.FormFile.FileName,
+                    ContentLength = avatarEditDto.File.FormFile.Length,
+                    ContentType = avatarEditDto.File.FormFile.ContentType,
+                };
+
+                using (var stream = new MemoryStream())
+                {
+                    await avatarEditDto.File.FormFile.CopyToAsync(stream);
+                    avatar.Blob = new AvatarBlob
+                    {
+                        AvatarKey = avatar.AvatarKey,
+                        Blob = stream.ToArray()
+                    };
+                }
+
+                avatarBase64 = $"data:{avatar.ContentType};base64,{Convert.ToBase64String(avatar.Blob.Blob)}";
+
+                user.Avatar = avatar;
+
+                await _context.Avatars.AddAsync(avatar);
+            }
+
+            await _context.SaveChangesAsync();
 
             var profilePhotoUrl = user?.Avatar?.Blob?.Blob != null
                     ? $"data:{user.Avatar.ContentType};base64,{Convert.ToBase64String(user.Avatar.Blob.Blob)}"
