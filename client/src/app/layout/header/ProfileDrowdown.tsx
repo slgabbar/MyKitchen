@@ -1,14 +1,17 @@
-import { Avatar, Box, IconButton, ListItemIcon, Menu, MenuItem, Tooltip } from "@mui/material";
+import { Avatar, Box, Divider, IconButton, ListItemIcon, Menu, MenuItem, Tooltip, Typography, useTheme } from "@mui/material";
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from '../../store/configureStore';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useNavigate } from "react-router-dom";
-import { signOut } from "../../../features/account/accountSlice";
+import { signOut, toggleTheme } from "../../../features/account/accountSlice";
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
 
 
 function ProfileDropdown() {
 
+  const theme = useTheme();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -64,6 +67,15 @@ function ProfileDropdown() {
                   </ListItemIcon>
                   Logout
             </MenuItem>
+            <Divider/>
+            <Box sx={{display: 'flex', alignItems: 'center', pl:1}}>
+                <IconButton size="small" color="inherit" onClick={() => dispatch(toggleTheme())}>
+                  {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+                </IconButton>
+                <Typography sx={{textTransform: 'capitalize', ml:1}}>
+                  {theme.palette.mode} Mode
+                </Typography>
+            </Box>
             </Menu>
           </Box>
   )}

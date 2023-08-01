@@ -18,6 +18,12 @@ import Header from './header/Header';
     },
   };
 
+  const darkTheme: ThemeOptions = {
+    palette: {
+        mode: 'dark',
+    },
+  };
+
   const mainAppStyles = {
     minWidth: '100%',
     padding: '0px 0px 0px 0px !important',
@@ -47,9 +53,10 @@ function App() {
         initApp().then(() => setLoading(false))
     }, [initApp])
 
-    const theme = createTheme(lightTheme);
-    const {user} = useAppSelector(state => state.account);
-
+    const {user, useDarkMode} = useAppSelector(state => state.account);
+    const themeType = useDarkMode ? darkTheme : lightTheme;
+    const theme = createTheme(themeType);
+    
     if (loading) return <span>Loading...</span>
 
     return (

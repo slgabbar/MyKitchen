@@ -56,6 +56,8 @@ function AccountSettings() {
         bgcolor: 'background.paper',
         display: 'flex', 
         borderRadius: '15px', 
+        borderColor: 'divider',
+        borderStyle: 'solid',
         mb:3, 
       }}>
       <Tabs
@@ -71,13 +73,10 @@ function AccountSettings() {
             p:2,
             "& button" : {borderRadius:'25px', marginY:'5px'},
             "& button:hover" : {color:'primary.main'},
-            "& button:active" : {backgroundColor:'primary.light'},
-            "& button.Mui-selected" : {backgroundColor:'primary.light', color:'white'},
           }}
       >
         <Tab sx={{textTransform:'none'}} label="My Profile" {...a11yProps(0)} />
-        <Tab sx={{textTransform:'none'}} label="Appearance" {...a11yProps(1)} />
-        <Tab sx={{textTransform:'none'}} label="Security" {...a11yProps(2)} />
+        <Tab sx={{textTransform:'none'}} label="Security" {...a11yProps(1)} />
       </Tabs>
       <TabPanel value={value} index={0}>
           <Card variant="outlined" sx={{width:'100%', mb:3}}>
@@ -121,9 +120,6 @@ function AccountSettings() {
           </Card>
       </TabPanel>
       <TabPanel value={value} index={1}>
-        Appearance settings here...
-      </TabPanel>
-      <TabPanel value={value} index={2}>
         email change and password change here...
       </TabPanel>
     </Container>
