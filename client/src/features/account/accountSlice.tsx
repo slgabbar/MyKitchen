@@ -6,10 +6,12 @@ import { router } from "../../app/router/Routes";
 
 interface AccountState {
     user: User | null;
+    useDarkMode: boolean;
 }
 
 const initialState: AccountState = {
-    user: null
+    user: null,
+    useDarkMode: false
 }
 
 export const fetchCurrentUserAsnyc = createAsyncThunk<User>(
@@ -18,7 +20,6 @@ export const fetchCurrentUserAsnyc = createAsyncThunk<User>(
         thunkApi.dispatch(setUser(JSON.parse(localStorage.getItem('user')!)));
         try {
             const user = await agent.Account.currentUser();
-            console.log(user);
             localStorage.setItem('user', JSON.stringify(user))
             return user;
         }
@@ -49,6 +50,9 @@ export const accountSlice = createSlice({
         },
         setUser: (state, action) => {
             state.user = action.payload;
+        },
+        toggleTheme: (state) => {
+            state.useDarkMode = !state.useDarkMode;
         }
     },
     extraReducers: (builder => {
@@ -64,4 +68,4 @@ export const accountSlice = createSlice({
     }),
 })
 
-export const {signOut, setUser} = accountSlice.actions;
+export const {signOut, setUser, toggleTheme} = accountSlice.actions;
