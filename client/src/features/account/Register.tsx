@@ -40,7 +40,6 @@ export default function Register() {
 
   return (
       <Container component={Paper} maxWidth="xs" sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', margin:'auto', p: 4}}>
-          <Typography component="h1" variant="h5" sx={{fontWeight:'bold', mb:4}}>REACT</Typography>
           <Typography component="h1" variant="h5" color={'primary.main'} sx={{fontWeight:'bold', mb:2}}>Sign Up</Typography>
           <Typography variant='subtitle1'>Enter your credentials to continue</Typography>
           <Divider sx={{width:'100%', my:2}}/>

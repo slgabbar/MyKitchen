@@ -12,7 +12,6 @@ function Header() {
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}
             onClick={() => navigate('/')}>
-            MUI
           </Typography>
           <ProfileDropdown/>
         </Toolbar>
