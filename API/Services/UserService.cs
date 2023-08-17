@@ -43,6 +43,7 @@ namespace API.Services
 
             var userDto = new UserDto
             {
+                UserId = user!.Id,
                 Email = user!.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
@@ -57,6 +58,7 @@ namespace API.Services
         {
             var user = new User
             {
+                Id = Guid.NewGuid(),
                 FirstName = registerDto.FirstName,
                 LastName = registerDto.LastName,
                 Email = registerDto.Email,
@@ -78,6 +80,7 @@ namespace API.Services
 
             var userDto = new UserDto
             {
+                UserId = user.Id,
                 Email = user.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
@@ -85,6 +88,26 @@ namespace API.Services
             };
 
             return new CommandResult<UserDto>(userDto);
+        }
+
+        public async Task<CommandResult<bool>> ChangePassword(ChangePasswordDto changePasswordDto)
+        {
+            var user = _context.Users.FirstOrDefault(x => x.Id == changePasswordDto.UserId);
+            if (user == null)
+                return new CommandResult<bool>("Could not find user");
+
+            if (changePasswordDto.NewPassword != changePasswordDto.ConfirmPassword)
+                return new CommandResult<bool>("Passwords do not match");
+
+            var result = await _userManager
+                .ChangePasswordAsync(user, changePasswordDto.CurrentPassword, changePasswordDto.NewPassword);
+
+            if (!result.Succeeded)
+                return new CommandResult<bool>(result.Errors.Select(x => x.Description).ToArray());
+
+            return result.Succeeded
+                ? new CommandResult<bool>(true)
+                : new CommandResult<bool>(result.Errors.Select(x => x.Description).ToArray());
         }
 
         public async Task<UserDto> GetCurrentUserAsync(string userName)
@@ -103,6 +126,7 @@ namespace API.Services
 
             return new UserDto
             {
+                UserId = user.Id,
                 Email = user.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
@@ -135,6 +159,7 @@ namespace API.Services
 
             var userDto = new UserDto
             {
+                UserId = user.Id,
                 Email = user!.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
@@ -196,6 +221,7 @@ namespace API.Services
 
             var userDto = new UserDto
             {
+                UserId = user.Id,
                 Email = user.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,

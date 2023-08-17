@@ -4,9 +4,10 @@ import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import ProfileEdit from "./ProfileEdit";
-import { Avatar, Card, CardContent, Container, Grid } from "@mui/material";
+import { Avatar, Card, CardContent, Container, Grid, TextField } from "@mui/material";
 import { useAppSelector } from "../../app/store/configureStore";
 import AvatarEdit from "./AvatarEdit";
+import ChangePassword from "./ChangePassword";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -97,7 +98,6 @@ function AccountSettings() {
               </Box>
             </CardContent>
           </Card>
-
           <Card variant="outlined" sx={{mb:3}}>
             <CardContent>
               <Box sx={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
@@ -120,7 +120,27 @@ function AccountSettings() {
           </Card>
       </TabPanel>
       <TabPanel value={value} index={1}>
-        email change and password change here...
+        <Card variant="outlined" sx={{mb:3}}>
+            <CardContent>
+              <Box sx={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
+                <Box>
+                  <Typography color="text.secondary">Email</Typography>
+                  <Typography>{user?.email}</Typography>
+                </Box>
+              </Box>
+            </CardContent>
+          </Card>
+          <Card variant="outlined" sx={{mb:3}}>
+            <CardContent>
+              <Box sx={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
+                <Box>
+                  <Typography color="text.secondary">Password</Typography>
+                  <Typography>**********</Typography>
+                </Box>
+                <ChangePassword/>
+              </Box>
+            </CardContent>
+          </Card>
       </TabPanel>
     </Container>
   );
