@@ -8,6 +8,10 @@ namespace API.Services
         
         Task<CommandResult<UserDto>> RegisterUser(RegisterDto registerDto);
 
+        Task<CommandResult<bool>> ChangePassword(ChangePasswordDto changePasswordDto);
+        
+        Task<CommandResult<UserDto>> ChangeEmail(ChangeEmailDto changeEmailDto);
+
         Task<CommandResult<UserDto>> ProfileEdit(string userName, ProfileEditDto profileEditDto);
 
         Task<CommandResult<UserDto>> AvatarEdit(string userName, AvatarEditDto avatarEditDto);

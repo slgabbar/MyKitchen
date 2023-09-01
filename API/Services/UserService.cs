@@ -4,6 +4,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace API.Services
 {
@@ -43,6 +44,7 @@ namespace API.Services
 
             var userDto = new UserDto
             {
+                UserId = user!.Id,
                 Email = user!.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
@@ -57,6 +59,7 @@ namespace API.Services
         {
             var user = new User
             {
+                Id = Guid.NewGuid(),
                 FirstName = registerDto.FirstName,
                 LastName = registerDto.LastName,
                 Email = registerDto.Email,
@@ -78,10 +81,70 @@ namespace API.Services
 
             var userDto = new UserDto
             {
+                UserId = user.Id,
                 Email = user.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Token = await _tokenService.GenerateToken(user)
+            };
+
+            return new CommandResult<UserDto>(userDto);
+        }
+
+        public async Task<CommandResult<bool>> ChangePassword(ChangePasswordDto changePasswordDto)
+        {
+            var user = _context.Users.FirstOrDefault(x => x.Id == changePasswordDto.UserId);
+            if (user == null)
+                return new CommandResult<bool>("Could not find user");
+
+            if (changePasswordDto.NewPassword != changePasswordDto.ConfirmPassword)
+                return new CommandResult<bool>("Passwords do not match");
+
+            var result = await _userManager
+                .ChangePasswordAsync(user, changePasswordDto.CurrentPassword, changePasswordDto.NewPassword);
+
+            if (!result.Succeeded)
+                return new CommandResult<bool>(result.Errors.Select(x => x.Description).ToArray());
+
+            return result.Succeeded
+                ? new CommandResult<bool>(true)
+                : new CommandResult<bool>(result.Errors.Select(x => x.Description).ToArray());
+        }
+
+        public async Task<CommandResult<UserDto>> ChangeEmail(ChangeEmailDto changeEmailDto)
+        {
+            var user = _context.Users
+                .Include(x => x.Avatar)
+                .ThenInclude(x => x.Blob)
+                .FirstOrDefault(x => x.Id == changeEmailDto.UserId);
+
+            if (user == null)
+                return new CommandResult<UserDto>("Could not find user");
+
+            if (changeEmailDto.Email.IsNullOrEmpty())
+                return new CommandResult<UserDto>("Email is required");
+
+            if (user.Email != changeEmailDto.Email)
+            {
+                var result = await _userManager.SetEmailAsync(user, changeEmailDto.Email);
+
+                if (!result.Succeeded)
+                    return new CommandResult<UserDto>(result.Errors.Select(x => x.Description).ToArray());
+            }
+
+            var userToken = await _tokenService.GenerateToken(user);
+            var profilePhotoUrl = user?.Avatar?.Blob?.Blob != null
+                ? $"data:{user.Avatar.ContentType};base64,{Convert.ToBase64String(user.Avatar.Blob.Blob)}"
+                : null;
+
+            var userDto = new UserDto
+            {
+                UserId = user!.Id,
+                Email = changeEmailDto.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                ProfilePhotoUrl = profilePhotoUrl,
+                Token = userToken
             };
 
             return new CommandResult<UserDto>(userDto);
@@ -103,6 +166,7 @@ namespace API.Services
 
             return new UserDto
             {
+                UserId = user.Id,
                 Email = user.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
@@ -135,6 +199,7 @@ namespace API.Services
 
             var userDto = new UserDto
             {
+                UserId = user.Id,
                 Email = user!.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
@@ -196,6 +261,7 @@ namespace API.Services
 
             var userDto = new UserDto
             {
+                UserId = user.Id,
                 Email = user.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
