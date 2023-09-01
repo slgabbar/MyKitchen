@@ -8,6 +8,7 @@ import { Avatar, Card, CardContent, Container, Grid, TextField } from "@mui/mate
 import { useAppSelector } from "../../app/store/configureStore";
 import AvatarEdit from "./AvatarEdit";
 import ChangePassword from "./ChangePassword";
+import ChangeEmail from "./ChangeEmail";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -127,6 +128,7 @@ function AccountSettings() {
                   <Typography color="text.secondary">Email</Typography>
                   <Typography>{user?.email}</Typography>
                 </Box>
+                <ChangeEmail/>
               </Box>
             </CardContent>
           </Card>

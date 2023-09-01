@@ -36,6 +36,10 @@ public class AccountController : BaseApiController
     public async Task<ActionResult<bool>> ChangePassword(ChangePasswordDto changePasswordDto) =>
       CommandResult(await _userService.ChangePassword(changePasswordDto));
 
+    [HttpPost("changeEmail")]
+    public async Task<ActionResult<UserDto>> ChangeEmail(ChangeEmailDto changeEmailDto) =>
+      CommandResult(await _userService.ChangeEmail(changeEmailDto));
+
     [Authorize]
     [HttpPost("profileEdit")]
     public async Task<ActionResult<UserDto>> ProfileEdit(ProfileEditDto profileEditDto) =>
