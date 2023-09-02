@@ -14,13 +14,16 @@ namespace API.Services
         private readonly TokenService _tokenService;
         private readonly ApplicationDbContext _context;
         private readonly IValidator<ProfileEditDto> _profileEditValidator;
+        private readonly IEmailService _emailService;
         public UserService(UserManager<User> userManager, TokenService tokenService,
-            ApplicationDbContext context, IValidator<ProfileEditDto> profileEditValidator)
+            ApplicationDbContext context, IValidator<ProfileEditDto> profileEditValidator,
+            IEmailService emailService)
         {
             _userManager = userManager;
             _tokenService = tokenService;
             _context = context;
             _profileEditValidator = profileEditValidator;
+            _emailService = emailService;
         }
 
         public async Task<CommandResult<UserDto>> LoginUser(LoginDto loginDto)
@@ -51,6 +54,15 @@ namespace API.Services
                 ProfilePhotoUrl = profilePhotoUrl,
                 Token = userToken
             };
+
+            var mailDto = new EmailDto
+            {
+                EmailTo = user.Email,
+                EmailSubject = "Log-In",
+                EmailBody = "Thanks for loggin in bro"
+            };
+
+            await _emailService.SendEailAsync(mailDto);
 
             return new CommandResult<UserDto>(userDto);
         }

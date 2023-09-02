@@ -72,6 +72,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IValidator<ProfileEditDto>, UserProfileEditValidator>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 var app = builder.Build();
 
