@@ -20,7 +20,8 @@ export default function Register() {
     mode: 'onSubmit'
   });
 
-  let confirmPassword = watch("password", "");
+    let confirmPassword = watch("password", "");
+    let accountConfirmationUrl = `${window.location.origin}/accountConfirmation`;
 
   function handleApiErrors(errors: any) {
     if (errors) {
@@ -51,7 +52,7 @@ export default function Register() {
               })
               .catch(error => handleApiErrors(error)))}
             noValidate sx={{ mt: 1 }}>
-
+            <input type="hidden" {...register('AccountConfirmationUrl')} value={accountConfirmationUrl} />
             <Grid container spacing={2}>
               <Grid item xs={6}>
                 <TextField

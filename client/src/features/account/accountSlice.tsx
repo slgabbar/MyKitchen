@@ -53,7 +53,7 @@ export const accountSlice = createSlice({
         },
         toggleTheme: (state) => {
             state.useDarkMode = !state.useDarkMode;
-        }
+        },
     },
     extraReducers: (builder => {
         builder.addCase(fetchCurrentUserAsnyc.rejected, (state) => {

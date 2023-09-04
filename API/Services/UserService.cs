@@ -3,8 +3,10 @@ using API.Entities;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace API.Services
 {
@@ -67,7 +69,7 @@ namespace API.Services
             return new CommandResult<UserDto>(userDto);
         }
 
-        public async Task<CommandResult<UserDto>> RegisterUser(RegisterDto registerDto)
+        public async Task<CommandResult<UserDto>> RegisterUser(RegisterDto registerDto, HttpRequest request)
         {
             var user = new User
             {
@@ -91,6 +93,9 @@ namespace API.Services
 
             await _userManager.AddToRoleAsync(user, "user");
 
+            var emailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            emailConfirmationToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(emailConfirmationToken));
+
             var userDto = new UserDto
             {
                 UserId = user.Id,
@@ -100,7 +105,29 @@ namespace API.Services
                 Token = await _tokenService.GenerateToken(user)
             };
 
+            if (!registerDto.AccountConfirmationUrl.IsNullOrEmpty())
+            {
+                var emailConfirmationUrl = $"{registerDto.AccountConfirmationUrl}?userId={user.Id}&confirmToken={emailConfirmationToken}";
+                var emailDto = new EmailDto
+                {
+                    EmailTo = registerDto.Email,
+                    EmailSubject = "Confirm Email",
+                    EmailBody = $"Thanks for registering, please <a href=\"{emailConfirmationUrl}\" target=\"_blank\">confirm your account</a>"
+                };
+                await _emailService.SendEailAsync(emailDto);
+            }
+
             return new CommandResult<UserDto>(userDto);
+        }
+
+        public async Task<CommandResult<bool>> ConfirmEmailDto(ConfirmEmailDto confirmEmailDto)
+        {
+            var token = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(confirmEmailDto.ConfirmToken));
+
+            var user = _context.Users.FirstOrDefault(x => x.Id == confirmEmailDto.UserId);
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+
+            return new CommandResult<bool>(result.Succeeded);
         }
 
         public async Task<CommandResult<bool>> ChangePassword(ChangePasswordDto changePasswordDto)

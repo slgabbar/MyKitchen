@@ -6,6 +6,7 @@ import App from "../layout/App";
 import RequireAuth from "../layout/RequireAuth";
 import { Error } from "../layout/Error";
 import AccountSettings from "../../features/accountSettings/AccountSettings";
+import AccountConfirmation from "../../features/account/AccountConfirmation";
 
 
 export const router = createBrowserRouter([
@@ -17,9 +18,10 @@ export const router = createBrowserRouter([
             {element: <RequireAuth/>, children: [
                 {path: '', element: <HomePage/>},
             ]},
-            {path: 'login', element: <Login/> },
-            {path: 'register', element: <Register/> },
-            {path: 'account', element: <AccountSettings/> },
+            { path: 'login', element: <Login/> },
+            { path: 'register', element: <Register/> },
+            { path: 'account', element: <AccountSettings /> },
+            { path: 'accountConfirmation', element: <AccountConfirmation /> },
         ]
     }
 ]);

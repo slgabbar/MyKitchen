@@ -53,6 +53,7 @@ const requests = {
 const Account = {
     login: (values: any) => requests.post('account/login', values),
     register: (values: any) => requests.post('account/register', values),
+    confirmEmail: (values: any) => requests.post('account/ConfirmEmail', values),
     changePassword: (values: any) => requests.post('account/changePassword', values),
     changeEmail: (values: any) => requests.post('account/changeEmail', values),
     currentUser: () => requests.get('account/currentUser')
