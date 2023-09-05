@@ -7,6 +7,7 @@ import RequireAuth from "../layout/RequireAuth";
 import { Error } from "../layout/Error";
 import AccountSettings from "../../features/accountSettings/AccountSettings";
 import AccountConfirmation from "../../features/account/AccountConfirmation";
+import RegisterConfirmation from "../../features/account/RegisterConfirmation";
 
 
 export const router = createBrowserRouter([
@@ -22,6 +23,7 @@ export const router = createBrowserRouter([
             { path: 'register', element: <Register/> },
             { path: 'account', element: <AccountSettings /> },
             { path: 'accountConfirmation', element: <AccountConfirmation /> },
+            { path: 'registerConfirmation', element: <RegisterConfirmation /> },
         ]
     }
 ]);

@@ -32,7 +32,7 @@ public class AccountController : BaseApiController
         CommandResult(await _userService.LoginUser(loginDto));
 
     [HttpPost("register")]
-    public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto) =>
+    public async Task<ActionResult<bool>> Register(RegisterDto registerDto) =>
         CommandResult(await _userService.RegisterUser(registerDto, Request));
 
     [HttpPost("confirmEmail")]

@@ -6,7 +6,7 @@ namespace API.Services
     {
         Task<CommandResult<UserDto>> LoginUser(LoginDto loginDto);
         
-        Task<CommandResult<UserDto>> RegisterUser(RegisterDto registerDto, HttpRequest request);
+        Task<CommandResult<bool>> RegisterUser(RegisterDto registerDto, HttpRequest request);
 
         Task<CommandResult<bool>> ConfirmEmailDto(ConfirmEmailDto confirmEmailDto);
 

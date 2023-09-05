@@ -69,7 +69,7 @@ namespace API.Services
             return new CommandResult<UserDto>(userDto);
         }
 
-        public async Task<CommandResult<UserDto>> RegisterUser(RegisterDto registerDto, HttpRequest request)
+        public async Task<CommandResult<bool>> RegisterUser(RegisterDto registerDto, HttpRequest request)
         {
             var user = new User
             {
@@ -81,32 +81,22 @@ namespace API.Services
             };
 
             if (user.FirstName == null || user.FirstName == "")
-                return new CommandResult<UserDto>("First name is required");
+                return new CommandResult<bool>("First name is required");
 
             if (user.LastName == null || user.LastName == "")
-                return new CommandResult<UserDto>("Last name is required");
+                return new CommandResult<bool>("Last name is required");
 
             var result = await _userManager.CreateAsync(user, registerDto.Password);
 
             if (!result.Succeeded)
-                return new CommandResult<UserDto>(result.Errors.Select(x => x.Description).ToArray());
+                return new CommandResult<bool>(result.Errors.Select(x => x.Description).ToArray());
 
             await _userManager.AddToRoleAsync(user, "user");
-
-            var emailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            emailConfirmationToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(emailConfirmationToken));
-
-            var userDto = new UserDto
-            {
-                UserId = user.Id,
-                Email = user.Email,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Token = await _tokenService.GenerateToken(user)
-            };
-
+            
             if (!registerDto.AccountConfirmationUrl.IsNullOrEmpty())
             {
+                var emailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                emailConfirmationToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(emailConfirmationToken));
                 var emailConfirmationUrl = $"{registerDto.AccountConfirmationUrl}?userId={user.Id}&confirmToken={emailConfirmationToken}";
                 var emailDto = new EmailDto
                 {
@@ -114,10 +104,11 @@ namespace API.Services
                     EmailSubject = "Confirm Email",
                     EmailBody = $"Thanks for registering, please <a href=\"{emailConfirmationUrl}\" target=\"_blank\">confirm your account</a>"
                 };
+
                 await _emailService.SendEailAsync(emailDto);
             }
 
-            return new CommandResult<UserDto>(userDto);
+            return new CommandResult<bool>(true);
         }
 
         public async Task<CommandResult<bool>> ConfirmEmailDto(ConfirmEmailDto confirmEmailDto)

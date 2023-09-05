@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import agent from "../../app/api/agent";
+import AccountConfirmationError from "./AccountConfirmationError";
+import AccountConfirmationSuccess from "./AccountConfirmationSuccess";
 
 function AccountConfirmation() {
 
@@ -29,10 +31,10 @@ function AccountConfirmation() {
     if (loading) return <span>Loading...</span>
 
     return (<>
-        {emailConfirmed && <strong>Email confirmed</strong>}
-        {!emailConfirmed && <strong>Email not confirmed</strong>}
+        {emailConfirmed && <AccountConfirmationSuccess />}
+        {!emailConfirmed && <AccountConfirmationError />}
         </>
-  );
+    ); 
 }
 
 export default AccountConfirmation;
