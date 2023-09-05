@@ -42,6 +42,9 @@ namespace API.Services
             if (!await _userManager.CheckPasswordAsync(user, loginDto.Password))
                 return new CommandResult<UserDto>("Invalid password");
 
+            if (!user.EmailConfirmed)
+                return new CommandResult<UserDto>("User email has not been verified");
+
             var userToken = await _tokenService.GenerateToken(user);
             var profilePhotoUrl = user?.Avatar?.Blob?.Blob != null
                 ? $"data:{user.Avatar.ContentType};base64,{Convert.ToBase64String(user.Avatar.Blob.Blob)}"
