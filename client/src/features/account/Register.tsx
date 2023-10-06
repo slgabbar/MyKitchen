@@ -12,6 +12,7 @@ import { getPasswordStrengthErrors, isValidEmail } from '../../app/util/validati
 import { User } from '../../app/models/user';
 import { useAppDispatch } from '../../app/store/configureStore';
 import { setUser } from '../../features/account/accountSlice'
+import { toast } from 'react-toastify';
 
 export default function Register() {
   const dispatch = useAppDispatch();
@@ -20,7 +21,8 @@ export default function Register() {
     mode: 'onSubmit'
   });
 
-  let confirmPassword = watch("password", "");
+    let confirmPassword = watch("password", "");
+    let accountConfirmationUrl = `${window.location.origin}/accountConfirmation`;
 
   function handleApiErrors(errors: any) {
     if (errors) {
@@ -44,14 +46,16 @@ export default function Register() {
           <Typography variant='subtitle1'>Enter your credentials to continue</Typography>
           <Divider sx={{width:'100%', my:2}}/>
           <Box component="form" onSubmit={handleSubmit(data => agent.Account.register(data)
-              .then((user: User) => {
-                localStorage.setItem('user', JSON.stringify(user));
-                dispatch(setUser(user));
-                navigate('/');
+              .then((success: boolean) => {
+                  if (success) {
+                      navigate('/registerConfirmation');
+                  } else {
+                      toast.error("Unexpected Error");
+                  }
               })
               .catch(error => handleApiErrors(error)))}
             noValidate sx={{ mt: 1 }}>
-
+            <input type="hidden" {...register('AccountConfirmationUrl')} value={accountConfirmationUrl} />
             <Grid container spacing={2}>
               <Grid item xs={6}>
                 <TextField

@@ -6,7 +6,13 @@ namespace API.Services
     {
         Task<CommandResult<UserDto>> LoginUser(LoginDto loginDto);
         
-        Task<CommandResult<UserDto>> RegisterUser(RegisterDto registerDto);
+        Task<CommandResult<bool>> RegisterUser(RegisterDto registerDto, HttpRequest request);
+
+        Task<CommandResult<bool>> ResetPasswordRequest(ResetPasswordRequestDto resetPasswordRequestDto, HttpRequest request);
+        
+        Task<CommandResult<bool>> ResetPassword(ResetPasswordDto resetPasswordDto);
+
+        Task<CommandResult<bool>> ConfirmEmail(ConfirmEmailDto confirmEmailDto);
 
         Task<CommandResult<bool>> ChangePassword(ChangePasswordDto changePasswordDto);
         
