@@ -114,7 +114,48 @@ namespace API.Services
             return new CommandResult<bool>(true);
         }
 
-        public async Task<CommandResult<bool>> ConfirmEmailDto(ConfirmEmailDto confirmEmailDto)
+        public async Task<CommandResult<bool>> ResetPasswordRequest(ResetPasswordRequestDto resetPasswordDto, HttpRequest request)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == resetPasswordDto.Email);
+
+            if (user != null)
+            {
+                var passwordResetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+                passwordResetToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(passwordResetToken));
+                var passwordResetUrl = $"{resetPasswordDto.ResetPasswordUrl}?email={resetPasswordDto.Email}&confirmToken={passwordResetToken}";
+                var emailDto = new EmailDto
+                {
+                    EmailTo = resetPasswordDto.Email,
+                    EmailSubject = "Reset Password",
+                    EmailBody = $"Follow the link to <a href=\"{passwordResetUrl}\" target=\"_blank\">reset your password</a>"
+                };
+
+                await _emailService.SendEailAsync(emailDto);
+            }
+
+            return new CommandResult<bool>(true);
+        }
+        
+        public async Task<CommandResult<bool>> ResetPassword(ResetPasswordDto resetPasswordDto)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == resetPasswordDto.Email);
+
+            if (user == null)
+                return new CommandResult<bool>("User not found");
+
+            if (resetPasswordDto.Password != resetPasswordDto.ConfirmPassword)
+                return new CommandResult<bool>("Password's do not match");
+
+            var token = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(resetPasswordDto.PasswordResetToken));
+            var result = await _userManager.ResetPasswordAsync(user, token, resetPasswordDto.Password);
+
+            if (!result.Succeeded)
+                return new CommandResult<bool>(result.Errors.Select(x => x.Description).ToArray());
+
+            return new CommandResult<bool>(true);
+        }
+
+        public async Task<CommandResult<bool>> ConfirmEmail(ConfirmEmailDto confirmEmailDto)
         {
             var token = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(confirmEmailDto.ConfirmToken));
 
@@ -304,5 +345,6 @@ namespace API.Services
 
             return new CommandResult<UserDto>(userDto);
         }
+
     }
 }

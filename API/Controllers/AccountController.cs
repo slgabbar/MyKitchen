@@ -35,14 +35,24 @@ public class AccountController : BaseApiController
     public async Task<ActionResult<bool>> Register(RegisterDto registerDto) =>
         CommandResult(await _userService.RegisterUser(registerDto, Request));
 
+    [HttpPost("resetPasswordRequest")]
+    public async Task<ActionResult<bool>> ResetPasswordRequest(ResetPasswordRequestDto resetPasswordRequestDto) =>
+        CommandResult(await _userService.ResetPasswordRequest(resetPasswordRequestDto, Request));
+
+    [HttpPost("resetPassword")]
+    public async Task<ActionResult<bool>> ResetPassword(ResetPasswordDto resetPasswordDto) =>
+     CommandResult(await _userService.ResetPassword(resetPasswordDto));
+
     [HttpPost("confirmEmail")]
     public async Task<ActionResult<bool>> ConfirmEmail(ConfirmEmailDto confirmEmailDto) =>
-        CommandResult(await _userService.ConfirmEmailDto(confirmEmailDto));
+        CommandResult(await _userService.ConfirmEmail(confirmEmailDto));
 
+    [Authorize]
     [HttpPost("changePassword")]
     public async Task<ActionResult<bool>> ChangePassword(ChangePasswordDto changePasswordDto) =>
       CommandResult(await _userService.ChangePassword(changePasswordDto));
 
+    [Authorize]
     [HttpPost("changeEmail")]
     public async Task<ActionResult<UserDto>> ChangeEmail(ChangeEmailDto changeEmailDto) =>
       CommandResult(await _userService.ChangeEmail(changeEmailDto));

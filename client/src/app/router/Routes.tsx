@@ -8,7 +8,8 @@ import { Error } from "../layout/Error";
 import AccountSettings from "../../features/accountSettings/AccountSettings";
 import AccountConfirmation from "../../features/account/AccountConfirmation";
 import RegisterConfirmation from "../../features/account/RegisterConfirmation";
-
+import RequestResetPassword from "../../features/account/RequestResetPassword";
+import ResetPassword from "../../features/account/ResetPassword";
 
 export const router = createBrowserRouter([
     {
@@ -24,6 +25,8 @@ export const router = createBrowserRouter([
             { path: 'account', element: <AccountSettings /> },
             { path: 'accountConfirmation', element: <AccountConfirmation /> },
             { path: 'registerConfirmation', element: <RegisterConfirmation /> },
+            { path: 'requestResetPassword', element: <RequestResetPassword /> },
+            { path: 'resetPassword', element: <ResetPassword /> },
         ]
     }
 ]);

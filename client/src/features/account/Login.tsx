@@ -13,8 +13,9 @@ import agent from '../../app/api/agent';
 import { User } from '../../app/models/user';
 
 export default function Login() {
-  const navigate = useNavigate();
-  const dispatch = useAppDispatch();
+    const navigate = useNavigate();
+    const dispatch = useAppDispatch();
+
     const {register, handleSubmit, setError, formState:{isSubmitting, errors}} = useForm({
         mode: 'onSubmit'
     });
@@ -35,7 +36,7 @@ export default function Login() {
     <Container component={Paper} maxWidth="xs" sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', margin:'auto', p: 4}}>
           <Typography component="h1" variant="h5" color={'primary.main'} sx={{fontWeight:'bold', mb:2}}>Hi, Welcome Back!</Typography>
           <Typography variant='subtitle1'>Enter your credentials to continue</Typography>
-          <Divider sx={{width:'100%', my:2}}/>
+          <Divider sx={{ width: '100%', my: 2 }} />
           <Box component="form" onSubmit={handleSubmit(data => agent.Account.login(data)
             .then((user: User) => {
               localStorage.setItem('user', JSON.stringify(user));
@@ -67,7 +68,10 @@ export default function Login() {
               })}
               error={!!errors.password}
               helperText={errors?.password?.message as string}
-           />
+              />
+              <Link to="/requestResetPassword" style={{ textDecoration: 'none', fontSize: '90%', marginLeft: '5px' }}>
+                  {"Reset Password?"}
+              </Link>
             <LoadingButton
               loading={isSubmitting}
               type="submit"
@@ -76,7 +80,7 @@ export default function Login() {
               sx={{ mt: 3, mb: 2 }}
             >
               Sign In
-            </LoadingButton>
+              </LoadingButton>
             <Divider sx={{width:'100%', my:2}}/>
             <Grid container alignItems='center' justifyContent='center'>
               <Grid item>
