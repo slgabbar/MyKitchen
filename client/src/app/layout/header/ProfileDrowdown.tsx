@@ -10,30 +10,28 @@ import Brightness7Icon from '@mui/icons-material/Brightness7';
 
 
 function ProfileDropdown() {
+    const theme = useTheme();
+    const navigate = useNavigate();
+    const dispatch = useAppDispatch();
 
-  const theme = useTheme();
-  const navigate = useNavigate();
-  const dispatch = useAppDispatch();
-
-  const {user} = useAppSelector(state => state.account);
+    const {user} = useAppSelector(state => state.account);
     const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
     const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElUser(event.currentTarget);
-  };
+        setAnchorElUser(event.currentTarget);
+    };
 
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
-  };
+    const handleCloseUserMenu = () => {
+        setAnchorElUser(null);
+    };
 
-  return (
+    const userIsAdmin = user?.userRoles.includes('admin');
+
+    return (
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-              <Avatar
-                            alt={user?.firstName! + user?.lastName}
-                            src={user?.profilePhotoUrl}
-                        /> 
-
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                    {userIsAdmin && <Avatar>A</Avatar>}
+                    {!userIsAdmin && <Avatar alt={user?.firstName! + user?.lastName} src={user?.profilePhotoUrl}/>}
               </IconButton>
             </Tooltip>
             <Menu
@@ -52,30 +50,31 @@ function ProfileDropdown() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-            <MenuItem key="accountSettings" onClick={() =>  {
-              navigate('account');
-              setAnchorElUser(null);
-            }}>
-                  <ListItemIcon>
-                    <SettingsIcon/>
-                  </ListItemIcon>
-                  Account Settings
-            </MenuItem>
-            <MenuItem key="logout" onClick={() => dispatch(signOut())}>
-                  <ListItemIcon>
-                    <LogoutIcon/>
-                  </ListItemIcon>
-                  Logout
-            </MenuItem>
-            <Divider/>
-            <Box sx={{display: 'flex', alignItems: 'center', pl:1}}>
-                <IconButton size="small" color="inherit" onClick={() => dispatch(toggleTheme())}>
-                  {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
-                </IconButton>
-                <Typography sx={{textTransform: 'capitalize', ml:1}}>
-                  {theme.palette.mode} Mode
-                </Typography>
-            </Box>
+                {   user?.userRoles.includes('user') &&
+                    <MenuItem key="accountSettings" onClick={() => {
+                        navigate('account');
+                        setAnchorElUser(null); }}>
+                        <ListItemIcon>
+                            <SettingsIcon />
+                        </ListItemIcon>
+                        Account Settings
+                    </MenuItem>
+                }
+                <MenuItem key="logout" onClick={() => dispatch(signOut())}>
+                        <ListItemIcon>
+                        <LogoutIcon/>
+                        </ListItemIcon>
+                        Logout
+                </MenuItem>
+                <Divider />
+                <Box sx={{display: 'flex', alignItems: 'center', pl:1}}>
+                    <IconButton size="small" color="inherit" onClick={() => dispatch(toggleTheme())}>
+                        {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+                    </IconButton>
+                    <Typography sx={{textTransform: 'capitalize', ml:1, mr:2}}>
+                        {theme.palette.mode} Mode
+                    </Typography>
+                </Box>
             </Menu>
           </Box>
   )}

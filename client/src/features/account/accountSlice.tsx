@@ -11,7 +11,7 @@ interface AccountState {
 
 const initialState: AccountState = {
     user: null,
-    useDarkMode: false
+    useDarkMode: false,
 }
 
 export const fetchCurrentUserAsnyc = createAsyncThunk<User>(

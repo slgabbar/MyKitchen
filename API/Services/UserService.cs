@@ -57,7 +57,8 @@ namespace API.Services
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 ProfilePhotoUrl = profilePhotoUrl,
-                Token = userToken
+                Token = userToken,
+                UserRoles = _userManager.GetRolesAsync(user!)?.Result?.ToList() ?? new List<string>()
             };
 
             var mailDto = new EmailDto
@@ -218,7 +219,8 @@ namespace API.Services
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 ProfilePhotoUrl = profilePhotoUrl,
-                Token = userToken
+                Token = userToken,
+                UserRoles = _userManager.GetRolesAsync(user!)?.Result?.ToList() ?? new List<string>()
             };
 
             return new CommandResult<UserDto>(userDto);
@@ -246,6 +248,7 @@ namespace API.Services
                 LastName = user.LastName,
                 ProfilePhotoUrl = avatarBase64,
                 Token = userToken,
+                UserRoles = _userManager.GetRolesAsync(user!)?.Result?.ToList() ?? new List<string>()
             };
         }
 
@@ -278,7 +281,8 @@ namespace API.Services
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 ProfilePhotoUrl = profilePhotoUrl,
-                Token = userToken
+                Token = userToken,
+                UserRoles = _userManager.GetRolesAsync(user!)?.Result?.ToList() ?? new List<string>()
             };
 
             return new CommandResult<UserDto>(userDto);
@@ -340,11 +344,11 @@ namespace API.Services
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 ProfilePhotoUrl = profilePhotoUrl,
-                Token = await _tokenService.GenerateToken(user)
+                Token = await _tokenService.GenerateToken(user),
+                UserRoles = _userManager.GetRolesAsync(user!)?.Result?.ToList() ?? new List<string>()
             };
 
             return new CommandResult<UserDto>(userDto);
         }
-
     }
 }

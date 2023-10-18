@@ -4,11 +4,13 @@ import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import ProfileEdit from "./ProfileEdit";
-import { Avatar, Card, CardContent, Container, Grid, TextField } from "@mui/material";
+import { Avatar, Card, CardContent, Container, Grid } from "@mui/material";
 import { useAppSelector } from "../../app/store/configureStore";
 import AvatarEdit from "./AvatarEdit";
 import ChangePassword from "./ChangePassword";
 import ChangeEmail from "./ChangeEmail";
+import { Navigate } from "react-router-dom";
+import { RoleProps } from "../../app/models/roleProps";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -44,108 +46,112 @@ function a11yProps(index: number) {
   };
 }
 
-function AccountSettings() {
-  const [value, setValue] = useState(0);
-  const {user} = useAppSelector(state => state.account);
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue);
-  };
+function AccountSettings(props: RoleProps) {
+    const [value, setValue] = useState(0);
+    const { user } = useAppSelector(state => state.account);
 
-  return (
-    <Container fixed maxWidth = 'md' disableGutters={true} sx={
-      { 
-        flexGrow: 1,
-        bgcolor: 'background.paper',
-        display: 'flex', 
-        borderRadius: '15px', 
-        borderColor: 'divider',
-        borderStyle: 'solid',
-        mb:3, 
-      }}>
-      <Tabs
-        orientation="vertical"
-        variant="scrollable"
-        value={value}
-        onChange={handleChange}
-        TabIndicatorProps={{ hidden: true}}
-        sx={{
-            textTransform: 'none',
-            borderRight: 1,
+    const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+        setValue(newValue);
+    };
+    const userHasCorrectRole = user!.userRoles.some(item => props.allowedRoles.includes(item))
+
+    if (!userHasCorrectRole)
+        return <Navigate to="/" replace={true} />
+
+    return (
+        <Container fixed maxWidth='md' disableGutters={true} sx={
+        { 
+            flexGrow: 1,
+            bgcolor: 'background.paper',
+            display: 'flex', 
+            borderRadius: '15px', 
             borderColor: 'divider',
-            p:2,
-            "& button" : {borderRadius:'25px', marginY:'5px'},
-            "& button:hover" : {color:'primary.main'},
-          }}
-      >
+            borderStyle: 'solid',
+            mb:3, 
+        }}>
+        <Tabs
+            orientation="vertical"
+            variant="scrollable"
+            value={value}
+            onChange={handleChange}
+            TabIndicatorProps={{ hidden: true}}
+            sx={{
+                textTransform: 'none',
+                borderRight: 1,
+                borderColor: 'divider',
+                p:2,
+                "& button" : {borderRadius:'25px', marginY:'5px'},
+                "& button:hover" : {color:'primary.main'},
+                }}
+        >
         <Tab sx={{textTransform:'none'}} label="My Profile" {...a11yProps(0)} />
         <Tab sx={{textTransform:'none'}} label="Security" {...a11yProps(1)} />
-      </Tabs>
-      <TabPanel value={value} index={0}>
-          <Card variant="outlined" sx={{width:'100%', mb:3}}>
+        </Tabs>
+        <TabPanel value={value} index={0}>
+            <Card variant="outlined" sx={{width:'100%', mb:3}}>
             <CardContent sx={{"&:last-child":{pb:2}}}>
-              <Box sx={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
+                <Box sx={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
                 <Box sx={{display:'flex',flexDirection:'row'}}>
-                  <Avatar
+                    <Avatar
                     alt={`${user?.firstName} ${user?.lastName}`}
                     src={user?.profilePhotoUrl}
                     sx={{ width: 100, height: 100 }}
                     />
                     <Box sx={{display:'flex',flexDirection:'column', ml:3, pt:1}}>
-                      <Typography variant="subtitle1">{user?.firstName} {user?.lastName}</Typography>
-                      <Typography variant="subtitle2">{user?.email}</Typography>
+                        <Typography variant="subtitle1">{user?.firstName} {user?.lastName}</Typography>
+                        <Typography variant="subtitle2">{user?.email}</Typography>
                     </Box> 
                 </Box>
                 <AvatarEdit/>         
-              </Box>
+                </Box>
             </CardContent>
-          </Card>
-          <Card variant="outlined" sx={{mb:3}}>
+            </Card>
+            <Card variant="outlined" sx={{mb:3}}>
             <CardContent>
-              <Box sx={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
+                <Box sx={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
                 <Typography sx={{fontWeight: 'bold', mb:2}} color="text.primary">
-                  Personal Information
+                    Personal Information
                 </Typography>
                 <ProfileEdit/>
-              </Box>
-              <Grid container spacing={2}>
+                </Box>
+                <Grid container spacing={2}>
                 <Grid item xs={4}>
-                  <Typography color="text.secondary">First Name</Typography>
-                  <Typography>{user?.firstName}</Typography>
+                    <Typography color="text.secondary">First Name</Typography>
+                    <Typography>{user?.firstName}</Typography>
                 </Grid>
                 <Grid item xs={4}>
-                  <Typography color="text.secondary">Last Name</Typography>
-                  <Typography>{user?.lastName}</Typography>
+                    <Typography color="text.secondary">Last Name</Typography>
+                    <Typography>{user?.lastName}</Typography>
                 </Grid>
-              </Grid>
+                </Grid>
             </CardContent>
-          </Card>
-      </TabPanel>
-      <TabPanel value={value} index={1}>
+            </Card>
+        </TabPanel>
+        <TabPanel value={value} index={1}>
         <Card variant="outlined" sx={{mb:3}}>
             <CardContent>
-              <Box sx={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
+                <Box sx={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
                 <Box>
-                  <Typography color="text.secondary">Email</Typography>
-                  <Typography>{user?.email}</Typography>
+                    <Typography color="text.secondary">Email</Typography>
+                    <Typography>{user?.email}</Typography>
                 </Box>
                 <ChangeEmail/>
-              </Box>
+                </Box>
             </CardContent>
-          </Card>
-          <Card variant="outlined" sx={{mb:3}}>
+            </Card>
+            <Card variant="outlined" sx={{mb:3}}>
             <CardContent>
-              <Box sx={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
+                <Box sx={{display:"flex",flexDirection:"row",justifyContent:"space-between"}}>
                 <Box>
-                  <Typography color="text.secondary">Password</Typography>
-                  <Typography>**********</Typography>
+                    <Typography color="text.secondary">Password</Typography>
+                    <Typography>**********</Typography>
                 </Box>
                 <ChangePassword/>
-              </Box>
+                </Box>
             </CardContent>
-          </Card>
-      </TabPanel>
-    </Container>
-  );
+            </Card>
+        </TabPanel>
+    </Container>);
 }
 
 export default AccountSettings;
