@@ -1,10 +1,11 @@
-import { Typography } from "@mui/material";
+import { Container, Typography } from "@mui/material";
+import UserTable from "../admin/UserTable";
 
 function AdminHomePage() {
     return (
-        <>
-            <Typography>Admin Home Page</Typography>
-        </>
+        <Container>
+            <UserTable></UserTable>
+        </Container>
     )
 }
 

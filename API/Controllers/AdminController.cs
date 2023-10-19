@@ -18,10 +18,17 @@ namespace API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Authorize(Roles = "admin")]
 public class AdminController : BaseApiController
 {
-    public AdminController()
-    {
+    private readonly IAdminService _adminService;
 
+    public AdminController(IAdminService adminService)
+    {
+        _adminService = adminService;
     }
+
+    [HttpPost("getUserLoginDataDataAsync")]
+    public async Task<IEnumerable<UserLoginDataDto>> GetUserLoginDataDataAsync() =>
+        await _adminService.GetUserLoginDataAsync();
 }
