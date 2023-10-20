@@ -1,10 +1,12 @@
-import { Container, Typography } from "@mui/material";
-import UserTable from "../admin/UserTable";
+import { Container, Paper } from "@mui/material";
+import UserDataGrid from "../admin/UserDataGrid";
 
 function AdminHomePage() {
     return (
         <Container>
-            <UserTable></UserTable>
+            <Paper>
+                <UserDataGrid></UserDataGrid>
+            </Paper>
         </Container>
     )
 }
