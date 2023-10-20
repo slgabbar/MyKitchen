@@ -1,5 +1,5 @@
 import { Box, Checkbox, FormControlLabel, IconButton, Paper, Switch, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, Toolbar, Tooltip, Typography } from '@mui/material';
-import { useMemo, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { alpha } from '@mui/material/styles';
@@ -30,12 +30,6 @@ function createData(
     };
 }
 
-/*const rows = [
-    createData(1, 'Sam', 'Gabbard', 'samgabbard11@gmail.com', 'Yes'),
-    createData(2, 'John', 'Appleseed', 'johnppleseed@gmail.com', 'No'),
-    createData(3, 'Ryan', 'Paul', 'raynpaul@gmail.com', 'No'),
-];*/
-
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
     if (b[orderBy] < a[orderBy]) {
         return -1;
@@ -58,22 +52,6 @@ function getComparator<Key extends keyof any>(
     return order === 'desc'
         ? (a, b) => descendingComparator(a, b, orderBy)
         : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-// Since 2020 all major browsers ensure sort stability with Array.prototype.sort().
-// stableSort() brings sort stability to non-modern browsers (notably IE11). If you
-// only support modern browsers you can replace stableSort(exampleArray, exampleComparator)
-// with exampleArray.slice().sort(exampleComparator)
-function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => number) {
-    const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
-    stabilizedThis.sort((a, b) => {
-        const order = comparator(a[0], b[0]);
-        if (order !== 0) {
-            return order;
-        }
-        return a[1] - b[1];
-    });
-    return stabilizedThis.map((el) => el[0]);
 }
 
 interface HeadCell {
@@ -234,20 +212,27 @@ export default function UserTable() {
     const [page, setPage] = useState(0);
     const [dense, setDense] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(5);
-    const [loading, setLoading] = useState(true);
-    const [rows, setRowData] = useState<Data[]>([]);
+    const [rowData, setRowData] = useState<Data[]>([]);
 
-    agent.Admin.GetUserLoginDataDataAsync()
-        .then(function (result) {
-            let rowData: Data[] = []
-            result.forEach((data: any) => {
-                rowData.push(createData(data.userId, data.firstName, data.lastName, data.email, data.emailConfirmed));
-            });
+    useEffect(() => {
+        agent.Admin.GetUserLoginDataDataAsync()
+            .then(function (result) {
+                let data: Data[] = []
+                result.forEach((d: any) => {
+                    data.push(createData(d.userId, d.firstName, d.lastName, d.email, d.emailConfirmed));
+                });
+                setRowData(data);
+            })
+    }, []);
 
-            setRowData(rowData);
-            setLoading(false);
-        })
-
+    const visibleRows = useMemo(
+        () =>
+            rowData.slice().sort(getComparator(order, orderBy)).slice(
+                page * rowsPerPage,
+                page * rowsPerPage + rowsPerPage,
+            ),
+        [rowData, order, orderBy, page, rowsPerPage],
+    );
 
     const handleRequestSort = (
         event: React.MouseEvent<unknown>,
@@ -260,7 +245,7 @@ export default function UserTable() {
 
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.checked) {
-            const newSelected = rows.map((n) => n.id);
+            const newSelected = rowData.map((n) => n.id);
             setSelected(newSelected);
             return;
         }
@@ -303,19 +288,7 @@ export default function UserTable() {
 
     // Avoid a layout jump when reaching the last page with empty rows.
     const emptyRows =
-        page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
-
-    const visibleRows = useMemo(
-        () =>
-            stableSort(rows, getComparator(order, orderBy)).slice(
-                page * rowsPerPage,
-                page * rowsPerPage + rowsPerPage,
-            ),
-        [order, orderBy, page, rowsPerPage],
-    );
-
-    if (loading)
-        return <Typography>Loading...</Typography>
+        page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rowData.length) : 0;
 
     return (
         <Box sx={{ width: '100%' }}>
@@ -333,7 +306,7 @@ export default function UserTable() {
                             orderBy={orderBy}
                             onSelectAllClick={handleSelectAllClick}
                             onRequestSort={handleRequestSort}
-                            rowCount={rows.length}
+                            rowCount={rowData.length}
                         />
                         <TableBody>
                             {visibleRows.map((row, index) => {
@@ -390,7 +363,7 @@ export default function UserTable() {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={rows.length}
+                    count={rowData.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}
