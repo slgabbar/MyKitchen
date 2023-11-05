@@ -1,8 +1,6 @@
 ﻿using API.Dtos;
 using API.Entities;
-using FluentValidation;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -10,14 +8,14 @@ using System.Text;
 
 namespace API.Services
 {
-    public class UserService : IUserService
+    public class AccountService : IAccountService
     {
         private readonly UserManager<User> _userManager;
         private readonly TokenService _tokenService;
         private readonly ApplicationDbContext _context;
         private readonly IEmailService _emailService;
 
-        public UserService(UserManager<User> userManager, TokenService tokenService,
+        public AccountService(UserManager<User> userManager, TokenService tokenService,
             ApplicationDbContext context, IEmailService emailService)
         {
             _userManager = userManager;
@@ -74,7 +72,8 @@ namespace API.Services
                 FirstName = registerDto.FirstName,
                 LastName = registerDto.LastName,
                 Email = registerDto.Email,
-                UserName = registerDto.Email
+                UserName = registerDto.Email,
+                CreatedOn = DateTime.Now
             };
 
             if (user.FirstName == null || user.FirstName == "")

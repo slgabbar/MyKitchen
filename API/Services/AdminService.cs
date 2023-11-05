@@ -1,12 +1,6 @@
 ﻿using API.Dtos;
 using API.Entities;
-using FluentValidation;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
 
 namespace API.Services
 {
@@ -28,7 +22,8 @@ namespace API.Services
                     FirstName = x.FirstName,
                     LastName = x.LastName,
                     Email = x.Email,
-                    EmailConfirmed = x.EmailConfirmed ? "Yes" : "No"
+                    EmailConfirmed = x.EmailConfirmed,
+                    CreatedOn = x.CreatedOn,
                 }).ToListAsync();
 
             return userDtos;

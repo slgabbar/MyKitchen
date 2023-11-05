@@ -12,6 +12,7 @@ namespace API.Entities
             {
                 builder.Property(m => m.FirstName).IsRequired(true);
                 builder.Property(m => m.LastName).IsRequired(true);
+                builder.Property(m => m.CreatedOn).IsRequired(true);
             }
         }
     }

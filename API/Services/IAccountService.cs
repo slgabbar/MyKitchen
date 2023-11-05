@@ -2,7 +2,7 @@
 
 namespace API.Services
 {
-    public interface IUserService
+    public interface IAccountService
     {
         Task<CommandResult<UserDto>> LoginUser(LoginDto loginDto);
         

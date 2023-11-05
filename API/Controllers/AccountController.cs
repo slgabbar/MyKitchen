@@ -1,18 +1,7 @@
 using API.Dtos;
-using API.Entities;
-using API.Models;
 using API.Services;
-using MailKit.Net.Smtp;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Diagnostics;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
-using MimeKit;
-using System.IO;
-using System.IO.Compression;
-using System.Linq.Expressions;
 
 namespace API.Controllers;
 
@@ -20,35 +9,35 @@ namespace API.Controllers;
 [Route("[controller]")]
 public class AccountController : BaseApiController
 {
-    private readonly IUserService _userService;
+    private readonly IAccountService _accountService;
     
-    public AccountController(IUserService userService)
+    public AccountController(IAccountService accountService)
     {
-        _userService = userService;
+        _accountService = accountService;
     }
 
     [HttpPost("login")]
     public async Task<ActionResult<UserDto>> Login(LoginDto loginDto) =>
-        CommandResult(await _userService.LoginUser(loginDto));
+        CommandResult(await _accountService.LoginUser(loginDto));
 
     [HttpPost("register")]
     public async Task<ActionResult<bool>> Register(RegisterDto registerDto) =>
-        CommandResult(await _userService.RegisterUser(registerDto, Request));
+        CommandResult(await _accountService.RegisterUser(registerDto, Request));
 
     [HttpPost("resetPasswordRequest")]
     public async Task<ActionResult<bool>> ResetPasswordRequest(ResetPasswordRequestDto resetPasswordRequestDto) =>
-        CommandResult(await _userService.ResetPasswordRequest(resetPasswordRequestDto, Request));
+        CommandResult(await _accountService.ResetPasswordRequest(resetPasswordRequestDto, Request));
 
     [HttpPost("resetPassword")]
     public async Task<ActionResult<bool>> ResetPassword(ResetPasswordDto resetPasswordDto) =>
-     CommandResult(await _userService.ResetPassword(resetPasswordDto));
+     CommandResult(await _accountService.ResetPassword(resetPasswordDto));
 
     [HttpPost("confirmEmail")]
     public async Task<ActionResult<bool>> ConfirmEmail(ConfirmEmailDto confirmEmailDto) =>
-        CommandResult(await _userService.ConfirmEmail(confirmEmailDto));
+        CommandResult(await _accountService.ConfirmEmail(confirmEmailDto));
 
     [Authorize]
     [HttpGet("currentUser")]
     public async Task<ActionResult<UserDto>> GetCurrentUser() =>
-        await _userService.GetCurrentUserAsync(User.Identity!.Name!);
+        await _accountService.GetCurrentUserAsync(User.Identity!.Name!);
 }

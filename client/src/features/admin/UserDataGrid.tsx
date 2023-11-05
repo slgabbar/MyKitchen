@@ -30,6 +30,12 @@ const columns: GridColDef[] = [
         width: 150,
         editable: false,
     },
+    {
+        field: 'createdOn',
+        headerName: 'Created',
+        width: 150,
+        editable: false,
+    },
 ];
 
 export default function UserDataGrid() {
@@ -45,7 +51,8 @@ export default function UserDataGrid() {
                         firstName: d.firstName,
                         lastName: d.lastName,
                         email: d.email,
-                        emailConfirmed: d.emailConfirmed
+                        emailConfirmed: d.emailConfirmedDisplay,
+                        createdOn: d.createdOnDisplay,
                     });
                 });
                 setRowData(dataObjArray);
