@@ -66,9 +66,15 @@ const ProfileSettings = {
     avatarEdit: (values: any) => requests.post('account/avatarEdit', values),
 }
 
+
+const Admin = {
+    GetUserLoginDataDataAsync: () => requests.post('admin/getUserLoginDataDataAsync', {}),
+}
+
 const agent = {
     Account,
     ProfileSettings,
+    Admin,
 }
 
 export default agent;

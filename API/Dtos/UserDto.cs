@@ -11,5 +11,6 @@ namespace API.Dtos
         public string LastName { get; set; } = null!;
         public string? ProfilePhotoUrl { get; set; }
         public string Token { get; set; } = null!;
+        public List<string> UserRoles { get; set; }
     }
 }

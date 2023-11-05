@@ -18,11 +18,11 @@ export const router = createBrowserRouter([
         errorElement: <Error/>,
         children:[
             {element: <RequireAuth/>, children: [
-                {path: '', element: <HomePage/>},
+                { path: '', element: <HomePage /> },
+                { path: 'account', element: <AccountSettings allowedRoles={["user"]} /> },
             ]},
             { path: 'login', element: <Login/> },
-            { path: 'register', element: <Register/> },
-            { path: 'account', element: <AccountSettings /> },
+            { path: 'register', element: <Register /> },
             { path: 'accountConfirmation', element: <AccountConfirmation /> },
             { path: 'registerConfirmation', element: <RegisterConfirmation /> },
             { path: 'requestResetPassword', element: <RequestResetPassword /> },

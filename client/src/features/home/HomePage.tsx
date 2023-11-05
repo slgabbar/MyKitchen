@@ -1,9 +1,12 @@
-import { Typography } from "@mui/material";
-
+import { useAppSelector } from "../../app/store/configureStore";
+import AdminHomePage from "./AdminHomePage";
+import UserHomePage from "./UserHomePage";
 function HomePage() {
+    const { user } = useAppSelector(state => state.account);
     return (
         <>
-        <Typography>Home</Typography>
+            {user?.userRoles.includes('admin') && <AdminHomePage />}
+            {user?.userRoles.includes('user') && <UserHomePage />}
         </>
     )
 }
