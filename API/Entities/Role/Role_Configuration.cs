@@ -8,12 +8,10 @@ namespace API.Entities
     {
     }
 
-    public class BasketItemEntityConfiguration : IEntityTypeConfiguration<User>
+    public class RoleEntityConfiguration : IEntityTypeConfiguration<Role>
     {
-        public void Configure(EntityTypeBuilder<User> builder)
+        public void Configure(EntityTypeBuilder<Role> builder)
         {
-            builder.Property(m => m.FirstName).IsRequired(true);
-            builder.Property(m => m.LastName).IsRequired(true);
         }
     }
 }

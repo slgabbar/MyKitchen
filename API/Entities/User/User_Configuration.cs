@@ -10,6 +10,8 @@ namespace API.Entities
         {
             public void Configure(EntityTypeBuilder<User> builder)
             {
+                builder.Property(m => m.FirstName).IsRequired(true);
+                builder.Property(m => m.LastName).IsRequired(true);
             }
         }
     }
