@@ -4,6 +4,5 @@ export interface User {
     firstName: string;
     lastName: string;
     token: string;
-    profilePhotoUrl: string;
     userRoles: string [];
 }

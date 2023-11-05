@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace API.Data.Migrations
+namespace API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230531134308_UserSettingsFoerignKeyTweaks")]
-    partial class UserSettingsFoerignKeyTweaks
+    [Migration("20231105222105_Initial_Setup")]
+    partial class Initial_Setup
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,45 +24,6 @@ namespace API.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("API.Entities.Attachment", b =>
-                {
-                    b.Property<Guid>("AttachmentKey")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<long>("ContentLength")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("ContentType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FileName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FileType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("AttachmentKey");
-
-                    b.ToTable("Attachment", (string)null);
-                });
-
-            modelBuilder.Entity("API.Entities.AttachmentBlob", b =>
-                {
-                    b.Property<Guid>("AttachmentKey")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<byte[]>("Blob")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
-
-                    b.HasKey("AttachmentKey");
-
-                    b.ToTable("AttachmentBlob", (string)null);
-                });
 
             modelBuilder.Entity("API.Entities.Role", b =>
                 {
@@ -164,19 +125,6 @@ namespace API.Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-                });
-
-            modelBuilder.Entity("API.Entities.UserSettings", b =>
-                {
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("AvatarAttachmentKey")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("UserId");
-
-                    b.ToTable("UserSettings", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -282,33 +230,6 @@ namespace API.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("API.Entities.Attachment", b =>
-                {
-                    b.HasOne("API.Entities.UserSettings", null)
-                        .WithOne("Avatar")
-                        .HasForeignKey("API.Entities.Attachment", "AttachmentKey")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("API.Entities.AttachmentBlob", b =>
-                {
-                    b.HasOne("API.Entities.Attachment", null)
-                        .WithOne("Blob")
-                        .HasForeignKey("API.Entities.AttachmentBlob", "AttachmentKey")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("API.Entities.UserSettings", b =>
-                {
-                    b.HasOne("API.Entities.User", null)
-                        .WithOne("UserSettings")
-                        .HasForeignKey("API.Entities.UserSettings", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.HasOne("API.Entities.Role", null)
@@ -357,24 +278,6 @@ namespace API.Data.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("API.Entities.Attachment", b =>
-                {
-                    b.Navigation("Blob")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("API.Entities.User", b =>
-                {
-                    b.Navigation("UserSettings")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("API.Entities.UserSettings", b =>
-                {
-                    b.Navigation("Avatar")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

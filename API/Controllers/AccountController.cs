@@ -48,26 +48,6 @@ public class AccountController : BaseApiController
         CommandResult(await _userService.ConfirmEmail(confirmEmailDto));
 
     [Authorize]
-    [HttpPost("changePassword")]
-    public async Task<ActionResult<bool>> ChangePassword(ChangePasswordDto changePasswordDto) =>
-      CommandResult(await _userService.ChangePassword(changePasswordDto));
-
-    [Authorize]
-    [HttpPost("changeEmail")]
-    public async Task<ActionResult<UserDto>> ChangeEmail(ChangeEmailDto changeEmailDto) =>
-      CommandResult(await _userService.ChangeEmail(changeEmailDto));
-
-    [Authorize]
-    [HttpPost("profileEdit")]
-    public async Task<ActionResult<UserDto>> ProfileEdit(ProfileEditDto profileEditDto) =>
-        CommandResult(await _userService.ProfileEdit(User.Identity!.Name!, profileEditDto));
-
-    [Authorize]
-    [HttpPost("avatarEdit")]
-    public async Task<ActionResult<UserDto>> EditAvatar([FromForm] AvatarEditDto avatarEditDto) =>
-        CommandResult(await _userService.AvatarEdit(User.Identity!.Name!, avatarEditDto));
-
-    [Authorize]
     [HttpGet("currentUser")]
     public async Task<ActionResult<UserDto>> GetCurrentUser() =>
         await _userService.GetCurrentUserAsync(User.Identity!.Name!);

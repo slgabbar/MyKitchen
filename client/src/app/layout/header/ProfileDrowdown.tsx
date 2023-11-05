@@ -1,9 +1,7 @@
 import { Avatar, Box, Divider, IconButton, ListItemIcon, Menu, MenuItem, Tooltip, Typography, useTheme } from "@mui/material";
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from '../../store/configureStore';
-import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
-import { useNavigate } from "react-router-dom";
 import { signOut, toggleTheme } from "../../../features/account/accountSlice";
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
@@ -11,7 +9,6 @@ import Brightness7Icon from '@mui/icons-material/Brightness7';
 
 function ProfileDropdown() {
     const theme = useTheme();
-    const navigate = useNavigate();
     const dispatch = useAppDispatch();
 
     const {user} = useAppSelector(state => state.account);
@@ -24,14 +21,14 @@ function ProfileDropdown() {
         setAnchorElUser(null);
     };
 
-    const userIsAdmin = user?.userRoles.includes('admin');
+    const userIsAdmin = user?.userRoles.includes('Admin');
+    const initials = userIsAdmin ? 'A' : `${user?.firstName.charAt(0)}${user?.lastName.charAt(0)}`;
 
     return (
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                    {userIsAdmin && <Avatar>A</Avatar>}
-                    {!userIsAdmin && <Avatar alt={user?.firstName! + user?.lastName} src={user?.profilePhotoUrl}/>}
+                    <Avatar>{initials}</Avatar>
               </IconButton>
             </Tooltip>
             <Menu
@@ -50,16 +47,6 @@ function ProfileDropdown() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-                {   user?.userRoles.includes('user') &&
-                    <MenuItem key="accountSettings" onClick={() => {
-                        navigate('account');
-                        setAnchorElUser(null); }}>
-                        <ListItemIcon>
-                            <SettingsIcon />
-                        </ListItemIcon>
-                        Account Settings
-                    </MenuItem>
-                }
                 <MenuItem key="logout" onClick={() => dispatch(signOut())}>
                         <ListItemIcon>
                         <LogoutIcon/>

@@ -5,8 +5,8 @@ function HomePage() {
     const { user } = useAppSelector(state => state.account);
     return (
         <>
-            {user?.userRoles.includes('admin') && <AdminHomePage />}
-            {user?.userRoles.includes('user') && <UserHomePage />}
+            {user?.userRoles.includes('Admin') && <AdminHomePage />}
+            {user?.userRoles.includes('User') && <UserHomePage />}
         </>
     )
 }

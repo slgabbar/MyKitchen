@@ -5,7 +5,6 @@ import HomePage from "../../features/home/HomePage";
 import App from "../layout/App";
 import RequireAuth from "../layout/RequireAuth";
 import { Error } from "../layout/Error";
-import AccountSettings from "../../features/accountSettings/AccountSettings";
 import AccountConfirmation from "../../features/account/AccountConfirmation";
 import RegisterConfirmation from "../../features/account/RegisterConfirmation";
 import RequestResetPassword from "../../features/account/RequestResetPassword";
@@ -19,7 +18,6 @@ export const router = createBrowserRouter([
         children:[
             {element: <RequireAuth/>, children: [
                 { path: '', element: <HomePage /> },
-                { path: 'account', element: <AccountSettings allowedRoles={["user"]} /> },
             ]},
             { path: 'login', element: <Login/> },
             { path: 'register', element: <Register /> },

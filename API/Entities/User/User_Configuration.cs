@@ -10,10 +10,6 @@ namespace API.Entities
         {
             public void Configure(EntityTypeBuilder<User> builder)
             {
-                builder.HasOne(m => m.Avatar)
-                    .WithOne(m => m.User)
-                    .HasForeignKey<Avatar>(m => m.UserId)
-                    .IsRequired(false);
             }
         }
     }
