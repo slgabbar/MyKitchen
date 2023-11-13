@@ -7,7 +7,6 @@ import { useAppDispatch, useAppSelector } from '../store/configureStore';
 import { fetchCurrentUserAsnyc } from '../../features/account/accountSlice';
 import { createTheme, ThemeOptions, ThemeProvider } from '@mui/material';
 import 'react-toastify/dist/ReactToastify.css';
-import Header from './header/Header';
 
   const lightTheme: ThemeOptions = {
     palette: {
@@ -64,7 +63,6 @@ function App() {
             <ToastContainer position='bottom-right' hideProgressBar theme='colored' />
             <CssBaseline />
             <Container sx={mainAppStyles}>
-                {user && <Header />}
                 <Outlet/>
             </Container>
         </ThemeProvider>
