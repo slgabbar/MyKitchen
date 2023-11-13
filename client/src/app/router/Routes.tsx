@@ -10,6 +10,7 @@ import RegisterConfirmation from "../../features/account/RegisterConfirmation";
 import RequestResetPassword from "../../features/account/RequestResetPassword";
 import ResetPassword from "../../features/account/ResetPassword";
 import Settings from "../../features/home/Settings";
+import MyRecipes from "../../features/recipe/MyRecipes";
 
 export const router = createBrowserRouter([
     {
@@ -20,6 +21,7 @@ export const router = createBrowserRouter([
             {element: <RequireAuth/>, children: [
                 { path: '', element: <HomePage /> },
                 { path: 'settings', element: <Settings /> },
+                { path: 'myRecipes', element: <MyRecipes /> },
             ]},
             { path: 'login', element: <Login/> },
             { path: 'register', element: <Register /> },

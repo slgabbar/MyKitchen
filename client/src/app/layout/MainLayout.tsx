@@ -18,6 +18,7 @@ import Brightness7Icon from '@mui/icons-material/Brightness7';
 import { useLocation, useNavigate } from "react-router-dom";
 import HomeIcon from '@mui/icons-material/Home';
 import SettingsIcon from '@mui/icons-material/Settings';
+import StickyNote2Icon from '@mui/icons-material/StickyNote2';
 import { toggleSideNavState } from "../../features/system/systemSlice";
 
 const drawerWidth = 240;
@@ -173,7 +174,28 @@ function MainLayout(props: MainLayoutProps) {
                             <ListItemText primary={'Home'} sx={{ opacity: sideNavOpen ? 1 : 0 }} />
                         </ListItemButton>
                     </ListItem>
-                   
+                    <ListItem key={'myRecipes'} disablePadding sx={{ display: 'block' }}>
+                        <ListItemButton
+                            onClick={() => navigate('/myRecipes')}
+                            selected={pathname.pathname === '/myRecipes'}
+                            sx={{
+                                minHeight: 48,
+                                justifyContent: sideNavOpen ? 'initial' : 'center',
+                                px: 2.5,
+                            }}
+                        >
+                            <ListItemIcon
+                                sx={{
+                                    minWidth: 0,
+                                    mr: sideNavOpen ? 1 : 'auto',
+                                    justifyContent: 'center',
+                                }}
+                            >
+                                <StickyNote2Icon></StickyNote2Icon>
+                            </ListItemIcon>
+                            <ListItemText primary={'My Recipes'} sx={{ opacity: sideNavOpen ? 1 : 0 }} />
+                        </ListItemButton>
+                    </ListItem>
                 </List>
                 <Divider />
                 <List>
