@@ -10,14 +10,14 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
 import SlideshowIcon from '@mui/icons-material/Slideshow';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { ExpandMore } from "@mui/icons-material";
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
-
+import { useLocation, useNavigate } from "react-router-dom";
+import HomeIcon from '@mui/icons-material/Home';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 const drawerWidth = 240;
 
@@ -74,11 +74,13 @@ interface MainLayoutProps {
 function MainLayout(props: MainLayoutProps) {
 
     const theme = useTheme();
+    const navigate = useNavigate();
     const [open, setOpen] = useState(false);
     const toggleDrawer = () => {
         setOpen(!open);
     };
 
+    const pathname = useLocation();
     const dispatch = useAppDispatch();
     const { user } = useAppSelector(state => state.account);
     const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
@@ -152,53 +154,54 @@ function MainLayout(props: MainLayoutProps) {
                 </DrawerHeader>
                 <Divider />
                 <List>
-                    {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-                        <ListItem key={text} disablePadding sx={{ display: 'block' }}>
-                            <ListItemButton
+                    <ListItem key={'home'} disablePadding sx={{ display: 'block' }}>
+                        <ListItemButton
+                            onClick={ () => navigate('/')}
+                            selected={pathname.pathname === '/'}
+                            sx={{
+                                minHeight: 48,
+                                justifyContent: open ? 'initial' : 'center',
+                                px: 2.5,
+                            }}
+                        >
+                            <ListItemIcon
                                 sx={{
-                                    minHeight: 48,
-                                    justifyContent: open ? 'initial' : 'center',
-                                    px: 2.5,
+                                    minWidth: 0,
+                                    mr: open ? 1 : 'auto',
+                                    justifyContent: 'center',
                                 }}
                             >
-                                <ListItemIcon
-                                    sx={{
-                                        minWidth: 0,
-                                        mr: open ? 1 : 'auto',
-                                        justifyContent: 'center',
-                                    }}
-                                >
-                                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                                </ListItemIcon>
-                                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-                            </ListItemButton>
-                        </ListItem>
-                    ))}
+                                <HomeIcon></HomeIcon>
+                            </ListItemIcon>
+                            <ListItemText primary={'Home'} sx={{ opacity: open ? 1 : 0 }} />
+                        </ListItemButton>
+                    </ListItem>
+                   
                 </List>
                 <Divider />
                 <List>
-                    {['All mail', 'Trash', 'Spam'].map((text, index) => (
-                        <ListItem key={text} disablePadding sx={{ display: 'block' }}>
-                            <ListItemButton
+                    <ListItem key={'settings'} disablePadding sx={{ display: 'block' }}>
+                        <ListItemButton
+                            onClick={() => navigate('/settings')}
+                            selected={pathname.pathname === '/settings'}
+                            sx={{
+                                minHeight: 48,
+                                justifyContent: open ? 'initial' : 'center',
+                                px: 2.5,
+                            }}
+                        >
+                            <ListItemIcon
                                 sx={{
-                                    minHeight: 48,
-                                    justifyContent: open ? 'initial' : 'center',
-                                    px: 2.5,
+                                    minWidth: 0,
+                                    mr: open ? 1 : 'auto',
+                                    justifyContent: 'center',
                                 }}
                             >
-                                <ListItemIcon
-                                    sx={{
-                                        minWidth: 0,
-                                        mr: open ? 1 : 'auto',
-                                        justifyContent: 'center',
-                                    }}
-                                >
-                                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                                </ListItemIcon>
-                                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-                            </ListItemButton>
-                        </ListItem>
-                    ))}
+                                <SettingsIcon />
+                            </ListItemIcon>
+                            <ListItemText primary={'Settings'} sx={{ opacity: open ? 1 : 0 }} />
+                        </ListItemButton>
+                    </ListItem>
                 </List>
                 <Box sx={{ marginTop: 'auto' }}>
                     <List>

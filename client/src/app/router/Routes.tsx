@@ -9,6 +9,7 @@ import AccountConfirmation from "../../features/account/AccountConfirmation";
 import RegisterConfirmation from "../../features/account/RegisterConfirmation";
 import RequestResetPassword from "../../features/account/RequestResetPassword";
 import ResetPassword from "../../features/account/ResetPassword";
+import Settings from "../../features/home/Settings";
 
 export const router = createBrowserRouter([
     {
@@ -18,6 +19,7 @@ export const router = createBrowserRouter([
         children:[
             {element: <RequireAuth/>, children: [
                 { path: '', element: <HomePage /> },
+                { path: 'settings', element: <Settings /> },
             ]},
             { path: 'login', element: <Login/> },
             { path: 'register', element: <Register /> },
