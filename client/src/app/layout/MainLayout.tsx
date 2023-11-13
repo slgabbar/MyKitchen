@@ -18,6 +18,7 @@ import Brightness7Icon from '@mui/icons-material/Brightness7';
 import { useLocation, useNavigate } from "react-router-dom";
 import HomeIcon from '@mui/icons-material/Home';
 import SettingsIcon from '@mui/icons-material/Settings';
+import { toggleSideNavState } from "../../features/system/systemSlice";
 
 const drawerWidth = 240;
 
@@ -75,14 +76,10 @@ function MainLayout(props: MainLayoutProps) {
 
     const theme = useTheme();
     const navigate = useNavigate();
-    const [open, setOpen] = useState(false);
-    const toggleDrawer = () => {
-        setOpen(!open);
-    };
-
+    const { sideNavOpen } = useAppSelector(state => state.system);
+    const { user } = useAppSelector(state => state.account);
     const pathname = useLocation();
     const dispatch = useAppDispatch();
-    const { user } = useAppSelector(state => state.account);
     const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
     const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElUser(event.currentTarget);
@@ -95,28 +92,28 @@ function MainLayout(props: MainLayoutProps) {
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
-            <Drawer variant="permanent" open={open} color="default">
+            <Drawer variant="permanent" open={sideNavOpen} color="default">
                 <DrawerHeader sx={{ p: 0, m: 0 }}>
                     <ListItem key={'profileDropdown'} disablePadding sx={{ display: 'block' }}>
                         <ListItemButton
                             onClick={handleOpenUserMenu}
                             sx={{
                                 minHeight: 48,
-                                justifyContent: open ? 'initial' : 'center',
+                                justifyContent: sideNavOpen ? 'initial' : 'center',
                                 px: 2.5,
                             }}
                         >
                             <ListItemIcon
                                 sx={{
                                     minWidth: 0,
-                                    mr: open ? 1 : 'auto',
+                                    mr: sideNavOpen ? 1 : 'auto',
                                     justifyContent: 'center',
                                 }}
                             >
                                 <RestaurantIcon></RestaurantIcon>
                             </ListItemIcon>
-                            <ListItemText primary='My Kitchen' secondary={user?.email} sx={{ opacity: open ? 1 : 0 }} />
-                            {open && <ExpandMore/>}
+                            <ListItemText primary='My Kitchen' secondary={user?.email} sx={{ opacity: sideNavOpen ? 1 : 0 }} />
+                            {sideNavOpen && <ExpandMore/>}
                         </ListItemButton>
                         <Menu
                             sx={{ mt: '45px' }}
@@ -160,20 +157,20 @@ function MainLayout(props: MainLayoutProps) {
                             selected={pathname.pathname === '/'}
                             sx={{
                                 minHeight: 48,
-                                justifyContent: open ? 'initial' : 'center',
+                                justifyContent: sideNavOpen ? 'initial' : 'center',
                                 px: 2.5,
                             }}
                         >
                             <ListItemIcon
                                 sx={{
                                     minWidth: 0,
-                                    mr: open ? 1 : 'auto',
+                                    mr: sideNavOpen ? 1 : 'auto',
                                     justifyContent: 'center',
                                 }}
                             >
                                 <HomeIcon></HomeIcon>
                             </ListItemIcon>
-                            <ListItemText primary={'Home'} sx={{ opacity: open ? 1 : 0 }} />
+                            <ListItemText primary={'Home'} sx={{ opacity: sideNavOpen ? 1 : 0 }} />
                         </ListItemButton>
                     </ListItem>
                    
@@ -186,20 +183,20 @@ function MainLayout(props: MainLayoutProps) {
                             selected={pathname.pathname === '/settings'}
                             sx={{
                                 minHeight: 48,
-                                justifyContent: open ? 'initial' : 'center',
+                                justifyContent: sideNavOpen ? 'initial' : 'center',
                                 px: 2.5,
                             }}
                         >
                             <ListItemIcon
                                 sx={{
                                     minWidth: 0,
-                                    mr: open ? 1 : 'auto',
+                                    mr: sideNavOpen ? 1 : 'auto',
                                     justifyContent: 'center',
                                 }}
                             >
                                 <SettingsIcon />
                             </ListItemIcon>
-                            <ListItemText primary={'Settings'} sx={{ opacity: open ? 1 : 0 }} />
+                            <ListItemText primary={'Settings'} sx={{ opacity: sideNavOpen ? 1 : 0 }} />
                         </ListItemButton>
                     </ListItem>
                 </List>
@@ -207,10 +204,10 @@ function MainLayout(props: MainLayoutProps) {
                     <List>
                         <ListItem key="toggleDrawer" disablePadding sx={{ display: 'block' }}>
                             <ListItemButton
-                                onClick={toggleDrawer}
+                                onClick={() => dispatch(toggleSideNavState())}
                                 sx={{
                                     minHeight: 48,
-                                    justifyContent: open ? 'end' : 'center',
+                                    justifyContent: sideNavOpen ? 'end' : 'center',
                                     px: 2.5,
                                 }}>
                                 <ListItemIcon
@@ -218,7 +215,7 @@ function MainLayout(props: MainLayoutProps) {
                                         minWidth: 0,
                                         justifyContent: 'center',
                                     }}>
-                                    <SlideshowIcon sx={{ transform: open ? 'rotate(180deg)' : '' }} />
+                                    <SlideshowIcon sx={{ transform: sideNavOpen ? 'rotate(180deg)' : '' }} />
                                 </ListItemIcon>
                             </ListItemButton>
                         </ListItem>

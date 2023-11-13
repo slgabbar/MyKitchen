@@ -1,10 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { accountSlice } from "../../features/account/accountSlice";
+import { systemSlice } from "../../features/system/systemSlice";
 
 export const store = configureStore({
     reducer: {
         account: accountSlice.reducer,
+        system: systemSlice.reducer
     }
 })
 
