@@ -29,6 +29,7 @@ namespace API.Services
             var recipe = new Recipe
             {
                 RecipeKey = Guid.NewGuid(),
+                UserKey = user.Id,
                 Title = createRecipeDto.Title,
                 Description = createRecipeDto.Description,
                 CreatedBy = user.UserName,
