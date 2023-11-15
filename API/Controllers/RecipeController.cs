@@ -28,6 +28,10 @@ public class RecipeController : BaseApiController
         _recipeService = recipeService;
     }
 
+    [HttpGet("getUserRecipes")]
+    public async Task<IEnumerable<RecipeBasicInfoDto>> Get() =>
+       await _recipeService.GetUserRecipesAsync(User.Identity!.Name!);
+
     [HttpPost("create")]
     public async Task<ActionResult<Guid>> Create(CreateRecipeDto createRecipeDto) =>
         CommandResult(await _recipeService.CreateRecipeAsync(createRecipeDto));

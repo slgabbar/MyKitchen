@@ -18,6 +18,11 @@ namespace API.Controllers
                     ModelState.AddModelError("", error);
                 });
 
+                command.ValidationResult?.Errors?.ForEach(error =>
+                {
+                    ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+                });
+
                 return ValidationProblem();
             }
 

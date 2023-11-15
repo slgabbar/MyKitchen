@@ -65,6 +65,7 @@ const Admin = {
 
 const Recipe = {
     CreateRecipe: (values: any) => requests.post('recipe/Create', values),
+    GetUserRecipes:() => requests.get('recipe/GetUserRecipes'),
 }
 
 const agent = {
