@@ -1,6 +1,7 @@
 ﻿using API.Dtos;
 using API.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace API.Services
 {
@@ -15,8 +16,7 @@ namespace API.Services
 
         public async Task<CommandResult<Guid>> CreateRecipeAsync(CreateRecipeDto createRecipeDto)
         {
-            //add abstract valdator here
-            if (createRecipeDto.Title == null)
+            if (createRecipeDto.Title == null || createRecipeDto.Title.Trim().IsNullOrEmpty())
                 return new CommandResult<Guid>("Title is required");
 
             var user = await _context.Users
