@@ -63,9 +63,14 @@ const Admin = {
     GetUserLoginDataDataAsync: () => requests.post('admin/getUserLoginDataDataAsync', {}),
 }
 
+const Recipe = {
+    CreateRecipe: (values: any) => requests.post('recipe/Create', values),
+}
+
 const agent = {
     Account,
     Admin,
+    Recipe,
 }
 
 export default agent;
