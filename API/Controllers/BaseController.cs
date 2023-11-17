@@ -13,11 +13,6 @@ namespace API.Controllers
         {
             if (command.IsFailure)
             {
-                command.ErrorMessages?.ForEach(error =>
-                {
-                    ModelState.AddModelError("", error);
-                });
-
                 command.ValidationResult?.Errors?.ForEach(error =>
                 {
                     ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
@@ -27,6 +22,33 @@ namespace API.Controllers
             }
 
             return Ok(command.Result);
+        }
+
+        protected async Task<ActionResult<T>> CommandResultAsync<T>(CommandAsync<T> command)
+        {
+            var commandResult = await command.ExecuteAsync();
+
+            if (!commandResult.PrerequisiteDataFound)
+            {
+                return NotFound();
+            }
+
+            if (!commandResult.CanAccess)
+            {
+                return Unauthorized();
+            }
+
+            if (commandResult.IsFailure)
+            {
+                commandResult.ValidationResult?.Errors?.ForEach(error =>
+                {
+                    ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+                });
+
+                return ValidationProblem();
+            }
+
+            return Ok(commandResult);
         }
     }
 }

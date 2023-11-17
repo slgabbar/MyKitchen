@@ -2,6 +2,7 @@ using API.Dtos;
 using API.Entities;
 using API.Models;
 using API.Services;
+using FluentValidation;
 using MailKit.Net.Smtp;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -22,10 +23,14 @@ namespace API.Controllers;
 public class RecipeController : BaseApiController
 {
     private readonly IRecipeService _recipeService;
+    private readonly ApplicationDbContext _db;
+    private readonly IValidator<CreateRecipeDto> _validator;
 
-    public RecipeController(IRecipeService recipeService)
+    public RecipeController(IRecipeService recipeService, ApplicationDbContext db, IValidator<CreateRecipeDto> validator)
     {
         _recipeService = recipeService;
+        _db = db;
+        _validator = validator;
     }
 
     [HttpGet("getUserRecipes")]
@@ -34,5 +39,6 @@ public class RecipeController : BaseApiController
 
     [HttpPost("create")]
     public async Task<ActionResult<Guid>> Create(CreateRecipeDto createRecipeDto) =>
-        CommandResult(await _recipeService.CreateRecipeAsync(createRecipeDto));
+        await CommandResultAsync(new CreateRecipeCommandAsync(_db, _validator, createRecipeDto));
+
 }
