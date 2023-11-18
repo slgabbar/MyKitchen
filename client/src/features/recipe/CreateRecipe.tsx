@@ -4,9 +4,11 @@ import { useForm } from 'react-hook-form';
 import agent from '../../app/api/agent';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { useAppSelector } from '../../app/store/configureStore';
+import { useNavigate } from 'react-router-dom';
 
 export default function CreateRecipe() {
 
+    const navigate = useNavigate();
     const [open, setOpen] = useState(false);
     const { user } = useAppSelector(state => state.account);
 
@@ -40,7 +42,10 @@ export default function CreateRecipe() {
         </Button>
         <Dialog open={open} onClose={handleClose}>
             <Box component="form" onSubmit={handleSubmit(data => agent.Recipe.CreateRecipe(data)
-                .then(() => setOpen(false))
+                .then((recipeKey) => {
+                    setOpen(false);
+                    navigate(`/Recipe/${recipeKey}`);
+                })
                 .catch(error => handleApiErrors(error)))}
             >
                 <DialogTitle>New Recipe</DialogTitle>

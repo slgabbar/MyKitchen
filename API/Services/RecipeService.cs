@@ -17,6 +17,19 @@ namespace API.Services
             _context = context;
         }
 
+        public async Task<RecipeDto?> GetRecipeAsync(Guid recipeKey)
+        {
+            return await _context.Recipes
+                .AsNoTracking()
+                .Where(x => x.RecipeKey == recipeKey)
+                .Select(x => new RecipeDto
+                {
+                    RecipeKey = x.RecipeKey,
+                    Title = x.Title,
+                    Description = x.Description,
+                }).FirstOrDefaultAsync();
+        }
+
         public async Task<IEnumerable<RecipeBasicInfoDto>> GetUserRecipesAsync(string userName)
         {
             var userKey = await _context.Users
@@ -28,6 +41,7 @@ namespace API.Services
                 .Where(x => x.UserKey == userKey)
                 .Select(x => new RecipeBasicInfoDto
                 {
+                    RecipeKey = x.RecipeKey,
                     Title = x.Title,
                     Description = x.Description,
                 }).ToListAsync();

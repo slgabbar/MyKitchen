@@ -11,6 +11,7 @@ import RequestResetPassword from "../../features/account/RequestResetPassword";
 import ResetPassword from "../../features/account/ResetPassword";
 import Settings from "../../features/home/Settings";
 import MyRecipes from "../../features/recipe/MyRecipes";
+import Recipe from "../../features/recipe/Recipe";
 
 export const router = createBrowserRouter([
     {
@@ -22,6 +23,7 @@ export const router = createBrowserRouter([
                 { path: '', element: <HomePage /> },
                 { path: 'settings', element: <Settings /> },
                 { path: 'myRecipes', element: <MyRecipes /> },
+                { path: 'recipe/:id', element: <Recipe /> },
             ]},
             { path: 'login', element: <Login/> },
             { path: 'register', element: <Register /> },
