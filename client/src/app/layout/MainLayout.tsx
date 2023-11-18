@@ -1,4 +1,4 @@
-import { Box, CssBaseline, Divider, IconButton, Menu,MenuItem, Typography } from "@mui/material";
+import { Box, Container, CssBaseline, Divider, IconButton, Menu,MenuItem, Typography } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../store/configureStore";
 import { signOut, toggleTheme } from "../../features/account/accountSlice";
 import RestaurantIcon from '@mui/icons-material/Restaurant';
@@ -152,7 +152,7 @@ function MainLayout(props: MainLayoutProps) {
                 </DrawerHeader>
                 <Divider />
                 <List>
-                    <ListItem key={'home'} disablePadding sx={{ display: 'block' }}>
+                   {/* <ListItem key={'home'} disablePadding sx={{ display: 'block' }}>
                         <ListItemButton
                             onClick={ () => navigate('/')}
                             selected={pathname.pathname === '/'}
@@ -173,7 +173,7 @@ function MainLayout(props: MainLayoutProps) {
                             </ListItemIcon>
                             <ListItemText primary={'Home'} sx={{ opacity: sideNavOpen ? 1 : 0 }} />
                         </ListItemButton>
-                    </ListItem>
+                    </ListItem>*/}
                     <ListItem key={'myRecipes'} disablePadding sx={{ display: 'block' }}>
                         <ListItemButton
                             onClick={() => navigate('/myRecipes')}
@@ -194,31 +194,6 @@ function MainLayout(props: MainLayoutProps) {
                                 <StickyNote2Icon></StickyNote2Icon>
                             </ListItemIcon>
                             <ListItemText primary={'My Recipes'} sx={{ opacity: sideNavOpen ? 1 : 0 }} />
-                        </ListItemButton>
-                    </ListItem>
-                </List>
-                <Divider />
-                <List>
-                    <ListItem key={'settings'} disablePadding sx={{ display: 'block' }}>
-                        <ListItemButton
-                            onClick={() => navigate('/settings')}
-                            selected={pathname.pathname === '/settings'}
-                            sx={{
-                                minHeight: 48,
-                                justifyContent: sideNavOpen ? 'initial' : 'center',
-                                px: 2.5,
-                            }}
-                        >
-                            <ListItemIcon
-                                sx={{
-                                    minWidth: 0,
-                                    mr: sideNavOpen ? 1 : 'auto',
-                                    justifyContent: 'center',
-                                }}
-                            >
-                                <SettingsIcon />
-                            </ListItemIcon>
-                            <ListItemText primary={'Settings'} sx={{ opacity: sideNavOpen ? 1 : 0 }} />
                         </ListItemButton>
                     </ListItem>
                 </List>
@@ -244,9 +219,9 @@ function MainLayout(props: MainLayoutProps) {
                     </List>
                 </Box>
             </Drawer>
-            <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+            <Container component="main" sx={{ flexGrow: 1, p: 3 }}>
                 {props.children}
-            </Box>
+            </Container>
         </Box>
     );
 }

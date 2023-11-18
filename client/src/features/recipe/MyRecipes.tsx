@@ -1,49 +1,67 @@
-import { Box, Button, Typography } from '@mui/material';
-import Container from '@mui/material/Container';
+import { Paper } from '@mui/material';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import agent from '../../app/api/agent';
 import MainLayout from '../../app/layout/MainLayout';
 import CreateRecipe from './CreateRecipe';
-interface BasicRecipeInfo {
-    recipeKey: string;
-    title: string;
-     description: string;
-}
+
+
+const columns: GridColDef[] = [
+    {
+        field: 'title',
+        headerName: 'Title',
+        width: 150,
+        editable: false,
+        renderCell: (params) =>
+            <Link to={`/recipe/${params.row.id}`}>{params.row.title}</Link>
+    },
+    {
+        field: 'description',
+        headerName: 'Description',
+        width: 150,
+        editable: false,
+    },
+];
+
 export default function MyRecipes() {
 
-    const [recipeData, setRecipeData] = useState<BasicRecipeInfo[]>([]);
+    const [rowData, setRowData] = useState<{}[]>([]);
 
     useEffect(() => {
         agent.Recipe.GetUserRecipes()
             .then(function (result) {
-                let dataObjArray: BasicRecipeInfo[] = [];
+                let dataObjArray: {}[] = [];
                 result.forEach((d: any) => {
                     dataObjArray.push({
-                        recipeKey: d.recipeKey,
+                        id: d.recipeKey,
                         title: d.title,
                         description: d.description,
                     });
                 });
-                setRecipeData(dataObjArray);
+                setRowData(dataObjArray);
             })
     }, []);
 
     return (
         <MainLayout>
-            <Container>
-                <>
-                    <CreateRecipe></CreateRecipe>
-                    {recipeData.map((recipe) =>
-                        <Box key = {recipe.title}>
-                            <Typography>
-                                {recipe.title}
-                                <Link to={`/Recipe/${recipe.recipeKey}`}>View</Link>
-                            </Typography>
-                        </Box>
-                    )}
-                </>
-            </Container>
+            <CreateRecipe></CreateRecipe>
+            <Paper elevation={1}>
+                <DataGrid
+                    rows={rowData}
+                    columns={columns}
+                    initialState={{
+                        pagination: {
+                            paginationModel: {
+                                pageSize: 5,
+                            },
+                        },
+                    }}
+                    pageSizeOptions={[5]}
+                    checkboxSelection
+                    disableRowSelectionOnClick
+                />
+            </Paper>
         </MainLayout>
     );
 }
