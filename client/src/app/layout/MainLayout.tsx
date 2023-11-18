@@ -1,4 +1,4 @@
-import { Box, Container, CssBaseline, Divider, IconButton, Menu,MenuItem, Typography } from "@mui/material";
+import { Box, CssBaseline, Divider, IconButton, Menu,MenuItem, Typography } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../store/configureStore";
 import { signOut, toggleTheme } from "../../features/account/accountSlice";
 import RestaurantIcon from '@mui/icons-material/Restaurant';
@@ -17,7 +17,6 @@ import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import { useLocation, useNavigate } from "react-router-dom";
 import HomeIcon from '@mui/icons-material/Home';
-import SettingsIcon from '@mui/icons-material/Settings';
 import StickyNote2Icon from '@mui/icons-material/StickyNote2';
 import { toggleSideNavState } from "../../features/system/systemSlice";
 
@@ -91,7 +90,7 @@ function MainLayout(props: MainLayoutProps) {
     };
 
     return (
-        <Box sx={{ display: 'flex' }}>
+        <Box id="tets" sx={{ display: 'flex' }}>
             <CssBaseline />
             <Drawer variant="permanent" open={sideNavOpen} color="default">
                 <DrawerHeader sx={{ p: 0, m: 0 }}>
@@ -152,7 +151,7 @@ function MainLayout(props: MainLayoutProps) {
                 </DrawerHeader>
                 <Divider />
                 <List>
-                   {/* <ListItem key={'home'} disablePadding sx={{ display: 'block' }}>
+                   <ListItem key={'home'} disablePadding sx={{ display: 'block' }}>
                         <ListItemButton
                             onClick={ () => navigate('/')}
                             selected={pathname.pathname === '/'}
@@ -173,7 +172,7 @@ function MainLayout(props: MainLayoutProps) {
                             </ListItemIcon>
                             <ListItemText primary={'Home'} sx={{ opacity: sideNavOpen ? 1 : 0 }} />
                         </ListItemButton>
-                    </ListItem>*/}
+                    </ListItem>
                     <ListItem key={'myRecipes'} disablePadding sx={{ display: 'block' }}>
                         <ListItemButton
                             onClick={() => navigate('/myRecipes')}
@@ -219,9 +218,9 @@ function MainLayout(props: MainLayoutProps) {
                     </List>
                 </Box>
             </Drawer>
-            <Container component="main" sx={{ flexGrow: 1, p: 3 }}>
+            <Box component="main" sx={{ width: '100%', p: 3 }}>
                 {props.children}
-            </Container>
+            </Box>
         </Box>
     );
 }

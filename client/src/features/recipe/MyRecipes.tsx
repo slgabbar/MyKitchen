@@ -1,9 +1,8 @@
-import { Paper } from '@mui/material';
+import { Paper, Typography } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import agent from '../../app/api/agent';
-import MainLayout from '../../app/layout/MainLayout';
 import CreateRecipe from './CreateRecipe';
 
 
@@ -44,7 +43,8 @@ export default function MyRecipes() {
     }, []);
 
     return (
-        <MainLayout>
+        <>
+            <Typography variant="h3">My Recipes</Typography>
             <CreateRecipe></CreateRecipe>
             <Paper elevation={1}>
                 <DataGrid
@@ -62,6 +62,6 @@ export default function MyRecipes() {
                     disableRowSelectionOnClick
                 />
             </Paper>
-        </MainLayout>
+        </>
     );
 }

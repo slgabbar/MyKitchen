@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import agent from "../../app/api/agent";
-import MainLayout from "../../app/layout/MainLayout";
-
 interface RecipeDto {
     recipeKey: string;
     title: string;
@@ -22,10 +20,10 @@ function Recipe() {
     }, [id]);
 
     return (
-        <MainLayout>
+        <>
             <p>{recipe?.title}</p>
             <p>{recipe?.description}</p>
-        </MainLayout>
+        </>
   );
 }
 

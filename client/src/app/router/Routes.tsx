@@ -9,9 +9,9 @@ import AccountConfirmation from "../../features/account/AccountConfirmation";
 import RegisterConfirmation from "../../features/account/RegisterConfirmation";
 import RequestResetPassword from "../../features/account/RequestResetPassword";
 import ResetPassword from "../../features/account/ResetPassword";
-import Settings from "../../features/home/Settings";
 import MyRecipes from "../../features/recipe/MyRecipes";
 import Recipe from "../../features/recipe/Recipe";
+import MainLayout from "../layout/MainLayout";
 
 export const router = createBrowserRouter([
     {
@@ -19,12 +19,14 @@ export const router = createBrowserRouter([
         element: <App/>,
         errorElement: <Error/>,
         children:[
-            {element: <RequireAuth/>, children: [
-                { path: '', element: <HomePage /> },
-                { path: 'settings', element: <Settings /> },
-                { path: 'myRecipes', element: <MyRecipes /> },
-                { path: 'recipe/:id', element: <Recipe /> },
-            ]},
+            {
+                element: <MainLayout><RequireAuth /></MainLayout>,
+                children: [
+                    { path: '', element: <HomePage /> },
+                    { path: 'myRecipes', element: <MyRecipes /> },
+                    { path: 'recipe/:id', element: <Recipe /> },
+                ]
+            },
             { path: 'login', element: <Login/> },
             { path: 'register', element: <Register /> },
             { path: 'accountConfirmation', element: <AccountConfirmation /> },
