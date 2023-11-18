@@ -9,6 +9,41 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class BaseApiController : ControllerBase
     {
+        public async Task<ActionResult<IEnumerable<T>>> QueryResulAsync<T>(QueryMultipleAsync<T> query)
+        {
+            var queryResult = await query.ExecuteAsync();
+
+            if (!queryResult.PrerequisiteDataFound)
+            {
+                return NotFound();
+            }
+
+            if (!queryResult.CanAccess)
+            {
+                return Unauthorized();
+            }
+         
+            return Ok(queryResult.Result);
+        }
+
+        public async Task<ActionResult<T>> QueryResulAsync<T>(QuerySingleAsync<T> query)
+        {
+            var queryResult = await query.ExecuteAsync();
+
+            if (!queryResult.PrerequisiteDataFound)
+            {
+                return NotFound();
+            }
+
+            if (!queryResult.CanAccess)
+            {
+                return Unauthorized();
+            }
+
+            return Ok(queryResult.Result);
+        }
+
+
         public ActionResult<T> CommandResult<T>(CommandResult<T> command)
         {
             if (command.IsFailure)
@@ -48,7 +83,7 @@ namespace API.Controllers
                 return ValidationProblem();
             }
 
-            return Ok(commandResult);
+            return Ok(commandResult.Result);
         }
     }
 }

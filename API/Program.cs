@@ -74,7 +74,6 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
-builder.Services.AddScoped<IRecipeService, RecipeService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IValidator<CreateRecipeDto>, CreateRecipeValidator>();
 
