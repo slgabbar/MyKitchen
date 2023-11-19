@@ -1,67 +1,51 @@
-import { Paper, Typography } from '@mui/material';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { Box, Container, Grid, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import agent from '../../app/api/agent';
+import { RecipeBasic } from '../../app/models/recipeBasic';
 import CreateRecipe from './CreateRecipe';
-
-
-const columns: GridColDef[] = [
-    {
-        field: 'title',
-        headerName: 'Title',
-        width: 150,
-        editable: false,
-        renderCell: (params) =>
-            <Link to={`/recipe/${params.row.id}`}>{params.row.title}</Link>
-    },
-    {
-        field: 'description',
-        headerName: 'Description',
-        width: 150,
-        editable: false,
-    },
-];
+import RecipeCard from './RecipeCard';
 
 export default function MyRecipes() {
 
-    const [rowData, setRowData] = useState<{}[]>([]);
+    const [recipes, setRecipes] = useState<RecipeBasic[]>([]);
 
     useEffect(() => {
         agent.Recipe.GetUserRecipes()
             .then(function (result) {
-                let dataObjArray: {}[] = [];
+                let dataObjArray: RecipeBasic[] = [];
                 result.forEach((d: any) => {
                     dataObjArray.push({
-                        id: d.recipeKey,
+                        recipeKey: d.recipeKey,
                         title: d.title,
                         description: d.description,
                     });
                 });
-                setRowData(dataObjArray);
+                setRecipes(dataObjArray);
             })
     }, []);
 
     return (
         <>
-            <Typography variant="h3">My Recipes</Typography>
-            <CreateRecipe></CreateRecipe>
-            <Paper elevation={1}>
-                <DataGrid
-                    rows={rowData}
-                    columns={columns}
-                    initialState={{
-                        pagination: {
-                            paginationModel: {
-                                pageSize: 5,
-                            },
-                        },
-                    }}
-                    pageSizeOptions={[5]}
-                    checkboxSelection
-                    disableRowSelectionOnClick
-                />
-            </Paper>
+            <Box sx={{ width: '100%' }}>
+                <Container>
+                    <Typography variant="h4">
+                        My Recipes
+                    </Typography>
+                    <CreateRecipe></CreateRecipe>
+                    <Grid container spacing={2}>
+                        {
+                            recipes.map(recipe =>
+                                <Grid key={recipe.recipeKey} item xs={4}>
+                                    <RecipeCard
+                                        recipeKey={recipe.recipeKey}
+                                        title={recipe.title}
+                                        description={recipe.description}
+                                    />
+                                </Grid>)
+                        }
+                    </Grid>
+                </Container>
+            </Box>
         </>
     );
 }

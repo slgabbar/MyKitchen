@@ -1,10 +1,12 @@
 import { useState } from 'react';
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Fab, TextField } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import agent from '../../app/api/agent';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { useAppSelector } from '../../app/store/configureStore';
 import { useNavigate } from 'react-router-dom';
+import AddIcon from '@mui/icons-material/Add';
+
 
 export default function CreateRecipe() {
 
@@ -37,9 +39,9 @@ export default function CreateRecipe() {
     };
 
     return (<>
-        <Button variant="outlined" onClick={handleClickOpen}>
-            New Recipe
-        </Button>
+        <Fab onClick={handleClickOpen} color="primary" aria-label="add">
+            <AddIcon />
+        </Fab>
         <Dialog open={open} onClose={handleClose}>
             <Box component="form" onSubmit={handleSubmit(data => agent.Recipe.CreateRecipe(data)
                 .then((recipeKey) => {
