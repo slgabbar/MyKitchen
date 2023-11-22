@@ -39,7 +39,7 @@ export default function CreateRecipe() {
     };
 
     return (<>
-        <Button sx={{ml:'auto'}} onClick={handleClickOpen} variant="contained" startIcon={<AddIcon />}>
+        <Button sx={{ ml: 'auto' }} onClick={handleClickOpen} variant="contained" startIcon={<AddIcon />} disableElevation={true}>
             Add New
         </Button>
         <Dialog open={open} onClose={handleClose}>

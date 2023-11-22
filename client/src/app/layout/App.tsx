@@ -11,9 +11,6 @@ import 'react-toastify/dist/ReactToastify.css';
   const lightTheme: ThemeOptions = {
     palette: {
         mode: 'light',
-        background: {
-            default: '#DCDCDC'
-        },
     },
   };
 

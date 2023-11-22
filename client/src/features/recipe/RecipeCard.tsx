@@ -6,14 +6,12 @@ export default function RecipeCard(recipe: RecipeBasic) {
 
     const navigate = useNavigate();
 
-
     const description = recipe.description?.length > 50
         ? recipe.description.substring(0, 125) + '...'
         : recipe.description;
 
-
     return (
-        <Card>
+        <Card raised={false} elevation={0} sx={{ border: '1px solid rgba(0, 0, 0, .12)' }}>
             <CardContent>
                 <Typography component="div" noWrap sx={{ fontWeight: 'bold' }}>{recipe.title}</Typography>
                 <Typography variant="body2" color="text.secondary">{description}</Typography>

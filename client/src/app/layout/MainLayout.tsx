@@ -149,7 +149,6 @@ function MainLayout(props: MainLayoutProps) {
                         </Menu>
                     </ListItem>
                 </DrawerHeader>
-                <Divider />
                 <List>
                    <ListItem key={'home'} disablePadding sx={{ display: 'block' }}>
                         <ListItemButton
