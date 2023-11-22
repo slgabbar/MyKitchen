@@ -13,8 +13,6 @@ function Recipe() {
     const [recipe, setRecipe] = useState<RecipeDto |null>(null);
     const { id } = useParams();
 
-    console.log(id);
-
     useEffect(() => {
         agent.Recipe.GetRecipe(id!)
             .then(function (result) {

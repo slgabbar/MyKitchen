@@ -90,7 +90,7 @@ function MainLayout(props: MainLayoutProps) {
     };
 
     return (
-        <Box id="tets" sx={{ display: 'flex', width: '100%' }}>
+        <Box id="tets" sx={{ display: 'flex', width: '100%', height: '100%' }}>
             <CssBaseline />
             <Drawer variant="permanent" open={sideNavOpen} color="default">
                 <DrawerHeader sx={{ p: 0, m: 0 }}>
@@ -218,7 +218,7 @@ function MainLayout(props: MainLayoutProps) {
                     </List>
                 </Box>
             </Drawer>
-            <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+            <Box component="main" sx={{ flexGrow: 1, p: 2 }}>
                 {props.children}
             </Box>
         </Box>

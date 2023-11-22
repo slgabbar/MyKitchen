@@ -6,15 +6,17 @@ export default function RecipeCard(recipe: RecipeBasic) {
 
     const navigate = useNavigate();
 
+
+    const description = recipe.description?.length > 50
+        ? recipe.description.substring(0, 125) + '...'
+        : recipe.description;
+
+
     return (
-        <Card sx={{ minWidth: 275 }}>
+        <Card>
             <CardContent>
-                <Typography variant="h5" component="div">
-                    {recipe.title}
-                </Typography>
-                <Typography variant="body2">
-                    {recipe.description}
-                </Typography>
+                <Typography component="div" noWrap sx={{ fontWeight: 'bold' }}>{recipe.title}</Typography>
+                <Typography variant="body2" color="text.secondary">{description}</Typography>
             </CardContent>
             <CardActions>
                 <Button onClick={() => navigate(`/recipe/${recipe.recipeKey}`)}

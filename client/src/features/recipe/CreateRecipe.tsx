@@ -39,9 +39,9 @@ export default function CreateRecipe() {
     };
 
     return (<>
-        <Fab onClick={handleClickOpen} color="primary" aria-label="add">
-            <AddIcon />
-        </Fab>
+        <Button sx={{ml:'auto'}} onClick={handleClickOpen} variant="contained" startIcon={<AddIcon />}>
+            Add New
+        </Button>
         <Dialog open={open} onClose={handleClose}>
             <Box component="form" onSubmit={handleSubmit(data => agent.Recipe.CreateRecipe(data)
                 .then((recipeKey) => {
