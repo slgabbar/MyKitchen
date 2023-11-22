@@ -17,7 +17,6 @@ import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import { useLocation, useNavigate } from "react-router-dom";
 import HomeIcon from '@mui/icons-material/Home';
-import SettingsIcon from '@mui/icons-material/Settings';
 import StickyNote2Icon from '@mui/icons-material/StickyNote2';
 import { toggleSideNavState } from "../../features/system/systemSlice";
 
@@ -91,7 +90,7 @@ function MainLayout(props: MainLayoutProps) {
     };
 
     return (
-        <Box sx={{ display: 'flex' }}>
+        <Box id="tets" sx={{ display: 'flex', width: '100%', height: '100%' }}>
             <CssBaseline />
             <Drawer variant="permanent" open={sideNavOpen} color="default">
                 <DrawerHeader sx={{ p: 0, m: 0 }}>
@@ -150,9 +149,8 @@ function MainLayout(props: MainLayoutProps) {
                         </Menu>
                     </ListItem>
                 </DrawerHeader>
-                <Divider />
                 <List>
-                    <ListItem key={'home'} disablePadding sx={{ display: 'block' }}>
+                   <ListItem key={'home'} disablePadding sx={{ display: 'block' }}>
                         <ListItemButton
                             onClick={ () => navigate('/')}
                             selected={pathname.pathname === '/'}
@@ -197,31 +195,6 @@ function MainLayout(props: MainLayoutProps) {
                         </ListItemButton>
                     </ListItem>
                 </List>
-                <Divider />
-                <List>
-                    <ListItem key={'settings'} disablePadding sx={{ display: 'block' }}>
-                        <ListItemButton
-                            onClick={() => navigate('/settings')}
-                            selected={pathname.pathname === '/settings'}
-                            sx={{
-                                minHeight: 48,
-                                justifyContent: sideNavOpen ? 'initial' : 'center',
-                                px: 2.5,
-                            }}
-                        >
-                            <ListItemIcon
-                                sx={{
-                                    minWidth: 0,
-                                    mr: sideNavOpen ? 1 : 'auto',
-                                    justifyContent: 'center',
-                                }}
-                            >
-                                <SettingsIcon />
-                            </ListItemIcon>
-                            <ListItemText primary={'Settings'} sx={{ opacity: sideNavOpen ? 1 : 0 }} />
-                        </ListItemButton>
-                    </ListItem>
-                </List>
                 <Box sx={{ marginTop: 'auto' }}>
                     <List>
                         <ListItem key="toggleDrawer" disablePadding sx={{ display: 'block' }}>
@@ -244,7 +217,7 @@ function MainLayout(props: MainLayoutProps) {
                     </List>
                 </Box>
             </Drawer>
-            <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+            <Box component="main" sx={{ flexGrow: 1, p: 2 }}>
                 {props.children}
             </Box>
         </Box>

@@ -75,6 +75,7 @@ builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IValidator<CreateRecipeDto>, CreateRecipeValidator>();
 
 var app = builder.Build();
 
