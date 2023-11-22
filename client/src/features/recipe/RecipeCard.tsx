@@ -11,7 +11,7 @@ export default function RecipeCard(recipe: RecipeBasic) {
         : recipe.description;
 
     return (
-        <Card raised={false} elevation={0} sx={{ border: '1px solid rgba(0, 0, 0, .12)' }}>
+        <Card raised={false} elevation={0} sx={{ border: 1 }}>
             <CardContent>
                 <Typography component="div" noWrap sx={{ fontWeight: 'bold' }}>{recipe.title}</Typography>
                 <Typography variant="body2" color="text.secondary">{description}</Typography>

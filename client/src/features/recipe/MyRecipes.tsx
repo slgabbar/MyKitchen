@@ -62,18 +62,16 @@ export default function MyRecipes() {
 
     return (
         <Box sx={{ minheight: '100%', display: 'flex', flexDirection: 'column' }}>
-            <Box sx={{ mb: 2 }}>
-                <Typography variant="h5" sx={{ fontWeight: 'bold', mb:1 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Typography variant="h5" sx={{ fontWeight: 'bold'}}>
                     My Recipes
                 </Typography>
-                <Divider/>
+                <CreateRecipe />
             </Box>
-            <Box sx={{ display: 'flex', mb: 2 }}>
-                <TextField sx={{ flex: 1, display: 'flex', justifyContent: 'center' }} onChange={handleSearch} id="myRecipeSearch" label="Search" variant="outlined" size="small" />
-                <Pagination color='primary' page={currentPage} sx={{ flex: 1, display: 'flex', justifyContent: 'center' }} count={Math.ceil(sortedRecipes.length / itemsPerPage)} onChange={(e, page) => paginate(e, page)} />
-                <Box sx={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
-                    <CreateRecipe />
-                </Box>
+            <Divider sx={{mb:2, mt:1}} />
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+                <TextField onChange={handleSearch} id="myRecipeSearch" label="Search" variant="outlined" size="small" />
+                <Pagination color='primary' page={currentPage} count={Math.ceil(sortedRecipes.length / itemsPerPage)} onChange={(e, page) => paginate(e, page)} />
             </Box>
             <Box sx={{ flexGrow: 1, mb: 2 }}>
                 {
