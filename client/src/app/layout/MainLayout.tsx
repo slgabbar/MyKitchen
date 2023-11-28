@@ -175,7 +175,7 @@ function MainLayout(props: MainLayoutProps) {
                     <ListItem key={'myRecipes'} disablePadding sx={{ display: 'block' }}>
                         <ListItemButton
                             onClick={() => navigate('/myRecipes')}
-                            selected={pathname.pathname === '/myRecipes'}
+                            selected={pathname.pathname === '/myRecipes' || pathname.pathname.includes('/recipe/')}
                             sx={{
                                 minHeight: 48,
                                 justifyContent: sideNavOpen ? 'initial' : 'center',
