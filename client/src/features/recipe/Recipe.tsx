@@ -1,8 +1,10 @@
-﻿import { Box, Button, Card, Container, Divider, Grid, TextField, Typography } from "@mui/material";
+﻿import { Box, Button, Card, Container, Divider, Grid, IconButton, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import agent from "../../app/api/agent";
+import AddIcon from '@mui/icons-material/Add';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import AddIngredient from "./AddIngredient";
 
 interface RecipeDto {
     recipeKey: string;
@@ -68,8 +70,9 @@ function Recipe() {
                 <Grid container spacing={2} sx={{ mt: 1, flex: 1 }}>
                     <Grid item lg={4} md={6} xs={12}>
                         <Box sx={{ border: 1, borderRadius: '16px', height: '100%', display: 'flex', flexDirection: 'column' }}>
-                            <Box sx={{ my: 1, alignSelf: 'center' }}>
-                                <Typography variant="h6" sx={{ textDecoration: 'underline' }}>Ingredients</Typography>
+                            <Box sx={{ my: 1, alignSelf: 'center', display: 'flex' }}>
+                                <Typography variant="h6" sx={{ margin: 'auto' }}>Ingredients</Typography>
+                                <AddIngredient />
                             </Box>
                             <Box>
                                 <ul>
